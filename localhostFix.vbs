@@ -10,20 +10,31 @@ Set objStream = CreateObject("ADODB.Stream")
 Set ModLookup = CreateObject("Scripting.Dictionary")
 TZOffset = GetTimeZoneOffset / 24
 
+Dim objFSO
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+
+Dim totalFound, totalSeen
+totalFound = 0
+totalSeen = 0
+
 '''
 ' Main program
 '''
 LoadModLookup
-FixArchives
+FixArchives 1000, 21000
 
 '''
 ' Relink Archived Podcasts to iTunes Media paths of media files
 '''
-Sub FixArchives()
+Sub FixArchives(first, last)
   Wscript.Echo "Fixing archives..."
-  Dim I, Location, count, T
-  count = Tracks.Count
-  For I = 1 to count
+
+  Dim start, count
+  start = IIF(first, first, 1)
+  count = IIF(last, last, Tracks.Count)
+
+  Dim I, Location, T
+  For I = start to count
     Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
     Set T = PersistentObject(Tracks(I))
     If T.Kind=1 Then
@@ -33,16 +44,49 @@ Sub FixArchives()
     End If
   Next
   Wscript.Echo ""
+  Wscript.Echo "Found " & totalFound & " of " & totalSeen
 End Sub
 
 Sub FixArchiveTrack(T)
-  Dim AddDate, I
-  Wscript.Echo T.Location
+  Dim AddDate, ModDate, Dest
   AddDate = CDate(T.DateAdded)
+  ModDate = ModLookup(AddDate)(T.Location)
 
-  Wscript.Echo AddDate & " " & ModLookup(AddDate)(T.Location)
-
+  totalSeen = totalSeen + 1
+  Dest = FindArchiveTrack(T.Location, ModDate)
+  if Dest <> False Then
+    Wscript.Echo Dest
+''    T.Location = Dest
+''  Wscript.Quit
+    totalFound = totalFound + 1
+  end if
 End Sub
+
+Function FindArchiveTrack(Location, ModDate)
+  Wscript.Echo Location
+
+  Dim Pref, Casc, path, I, NewDate
+  Pref = "N:\iTunes\iTunes Media\Podcasts"
+  Casc = Array(Pref, Pref & " Over", Pref & " Over Over", Pref & " Over Over Over")
+
+  For Each path in Casc
+    path = Replace(Location, "G:\Archived Podcasts", path)
+
+    If objFSO.FileExists(path) Then
+      NewDate = objFSO.GetFile(path).DateCreated
+      For I = -1 to +1
+        If CDate(Cstr(NewDate + I/24)) = ModDate Then
+          FindArchiveTrack = path
+          Exit Function
+        Else
+          Wscript.Echo NewDate + I/24 & " <> " & ModDate
+        End If
+      Next
+    End If
+  Next
+  FindArchiveTrack = False
+End Function
+
 
 '''
 ' Load table to look up Modified Date as a function of Added Date and Location
@@ -127,6 +171,15 @@ Function GetTimeZoneOffset()
         GetTimeZoneOffset = oItem.CurrentTimeZone / 60
         Exit For
     Next
+End Function
+
+' https://stackoverflow.com/questions/20353072/how-to-do-a-single-line-if-statement-in-vbscript-for-classic-asp
+Function IIf(bClause, sTrue, sFalse)
+    If CBool(bClause) Then
+        IIf = sTrue
+    Else
+        IIf = sFalse
+    End If
 End Function
 
 ' =========
