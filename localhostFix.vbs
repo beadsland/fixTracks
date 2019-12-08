@@ -14,20 +14,54 @@ Dim objFSO
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 
 Dim totalFound, totalSeen
-totalFound = 0
-totalSeen = 0
 
 '''
 ' Main program
 '''
-LoadModLookup
-FixArchives 1000, 21000
+'FixArchives 1000, 21000
+'FixDriveLetter
+'FindArchives
+
+'''
+' Consolidate all files onto same drive
+'''
+Sub FixDriveLetter()
+  Wscript.Echo "Fixing drive letter..."
+
+  Dim Letters
+  Letters = Array("C", "E", "G")
+
+  Dim I, Location, T, count, letter, newstr
+  count = Tracks.Count
+  For I = 1 to count
+    Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
+    Set T = PersistentObject(Tracks(I))
+    If T.Kind=1 Then
+      For Each letter in Letters
+        If InStr(T.Location, letter & ":\") Then
+          If InStr(T.Location, "Archived Podcasts") = 0 Then
+            Wscript.Echo T.Location
+            newstr = Replace(T.Location, letter & ":\", "N:\")
+            T.Location = newstr
+          End If
+        End If
+      Next
+    End If
+  Next
+  Wscript.Echo ""
+  Wscript.Echo "Found " & totalFound & " of " & totalSeen
+End Sub
 
 '''
 ' Relink Archived Podcasts to iTunes Media paths of media files
 '''
 Sub FixArchives(first, last)
+  LoadModLookup
+
   Wscript.Echo "Fixing archives..."
+
+  totalFound = 0
+  totalSeen = 0
 
   Dim start, count
   start = IIF(first, first, 1)
@@ -39,7 +73,7 @@ Sub FixArchives(first, last)
     Set T = PersistentObject(Tracks(I))
     If T.Kind=1 Then
       If InStr(T.Location, "Archived Podcasts") Then
-        FixArchiveTrack(Tracks(I))
+        FixArchiveTrack Tracks(I), "G:\Archived Podcasts"
       End If
     End If
   Next
@@ -47,7 +81,35 @@ Sub FixArchives(first, last)
   Wscript.Echo "Found " & totalFound & " of " & totalSeen
 End Sub
 
-Sub FixArchiveTrack(T)
+Sub FindArchives(first, last)
+  LoadModLookup
+
+  Wscript.Echo "Finding archives..."
+
+  totalFound = 0
+  totalSeen = 0
+
+  Dim start, count
+  start = IIF(first, first, 1)
+  count = IIF(last, last, Tracks.Count)
+
+  Dim I, Location, T
+  For I = start to count
+    Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
+    Set T = PersistentObject(Tracks(I))
+    If T.Kind=1 Then
+      If Not objFSO.FileExists(path) Then
+        Wscript.Echo path
+        Wscript.Quit
+        ''FixArchiveTrack Tracks(I), "N:\iTunes\iTunes Media\Podcasts"
+      End If
+    End If
+  Next
+  Wscript.Echo ""
+  Wscript.Echo "Found " & totalFound & " of " & totalSeen
+End Sub
+
+Sub FixArchiveTrack(T, prefix)
   Dim AddDate, ModDate, Dest
   AddDate = CDate(T.DateAdded)
   ModDate = ModLookup(AddDate)(T.Location)
@@ -56,13 +118,12 @@ Sub FixArchiveTrack(T)
   Dest = FindArchiveTrack(T.Location, ModDate)
   if Dest <> False Then
     Wscript.Echo Dest
-''    T.Location = Dest
-''  Wscript.Quit
+    T.Location = Dest
     totalFound = totalFound + 1
   end if
 End Sub
 
-Function FindArchiveTrack(Location, ModDate)
+Function FindArchiveTrack(Location, ModDate, prefix)
   Wscript.Echo Location
 
   Dim Pref, Casc, path, I, NewDate
@@ -70,7 +131,7 @@ Function FindArchiveTrack(Location, ModDate)
   Casc = Array(Pref, Pref & " Over", Pref & " Over Over", Pref & " Over Over Over")
 
   For Each path in Casc
-    path = Replace(Location, "G:\Archived Podcasts", path)
+    path = Replace(Location, prefix, path)
 
     If objFSO.FileExists(path) Then
       NewDate = objFSO.GetFile(path).DateCreated
