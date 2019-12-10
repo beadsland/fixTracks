@@ -5,9 +5,10 @@ Dim iTunes, Tracks
 Set iTunes=CreateObject("iTunes.Application")
 Set Tracks=iTunes.LibraryPlaylist.Tracks
 
-Dim objStream, ModLookup, TZOffset
+Dim objStream, ModLookup, LocLookup, TZOffset
 Set objStream = CreateObject("ADODB.Stream")
 Set ModLookup = CreateObject("Scripting.Dictionary")
+Set LocLookup = CreateObject("Scripting.Dictionary")
 TZOffset = GetTimeZoneOffset / 24
 
 Dim objFSO
@@ -20,7 +21,7 @@ Dim totalFound, totalSeen
 '''
 'FixArchives 1000, 21000
 'FixDriveLetter
-'FindArchives
+FindArchives False, False
 
 '''
 ' Consolidate all files onto same drive
@@ -38,12 +39,10 @@ Sub FixDriveLetter()
     Set T = PersistentObject(Tracks(I))
     If T.Kind=1 Then
       For Each letter in Letters
-        If InStr(T.Location, letter & ":\") Then
-          If InStr(T.Location, "Archived Podcasts") = 0 Then
+        If InStr(T.Location, letter & ":\") = 1 Then
             Wscript.Echo T.Location
             newstr = Replace(T.Location, letter & ":\", "N:\")
             T.Location = newstr
-          End If
         End If
       Next
     End If
@@ -96,36 +95,77 @@ Sub FindArchives(first, last)
   Dim I, Location, T
   For I = start to count
     Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
-    Set T = PersistentObject(Tracks(I))
-    If T.Kind=1 Then
-      If Not objFSO.FileExists(path) Then
-        Wscript.Echo path
-        Wscript.Quit
-        ''FixArchiveTrack Tracks(I), "N:\iTunes\iTunes Media\Podcasts"
+    Set T = Tracks(I)
+
+    if T.KindAsString <> "PDF document" Then
+      Location = ""
+      On Error Resume Next
+      Location=T.Location
+      On Error Goto 0
+      If Location = "" and Not objFSO.FileExists(Location) Then
+        FindMissingArchive T, Location
       End If
     End If
   Next
+
   Wscript.Echo ""
   Wscript.Echo "Found " & totalFound & " of " & totalSeen
 End Sub
 
-Sub FixArchiveTrack(T, prefix)
+Sub FindMissingArchive(T, Location)
+  Dim high, low
+  high = iTunes.ITObjectPersistentIDHigh(T)
+  low = iTunes.ITObjectPersistentIDLow(T)
+
+  If Not LocLookup.Exists(high) Then
+    Wscript.Echo "no loc found: " & high & ", " & low & " " & T.Name
+  End If
+  Location = LocLookup(high)(low)
+  Set T=iTunes.LibraryPlaylist.Tracks.ItemByPersistentID(high, low)
+
+  Wscript.Echo T.Name
+  Wscript.Echo Location
+
+  FixMissingArchive T, Location
+End Sub
+
+Sub FixMissingArchive(T, Location)
+  Dim Letters, letter
+  Letters = Array("C", "E", "G", "N")
+  Dim Prefixes, prefix
+  Prefixes = Array(":\iTunes\iTunes Media\Podcasts", ":\iTunes\Podcasts", ":\Archived Podcasts")
+
+  For Each prefix in Prefixes
+    For Each letter in Letters
+      FixArchiveTrack T, Location, letter & prefix
+
+      On Error Resume Next
+      If T.Location <> "" Then Exit For
+      On Error Goto 0
+    Next
+
+    On Error Resume Next
+    If T.Location <> "" Then Exit For
+    On Error Goto 0
+  Next
+End Sub
+
+Sub FixArchiveTrack(T, Location, prefix)
   Dim AddDate, ModDate, Dest
   AddDate = CDate(T.DateAdded)
-  ModDate = ModLookup(AddDate)(T.Location)
+  ModDate = ModLookup(AddDate)(Location)
 
   totalSeen = totalSeen + 1
-  Dest = FindArchiveTrack(T.Location, ModDate)
+  Dest = FindArchiveTrack(Location, ModDate, prefix)
   if Dest <> False Then
     Wscript.Echo Dest
     T.Location = Dest
     totalFound = totalFound + 1
+    Wscript.Echo "Found " & totalFound & " of " & totalSeen
   end if
 End Sub
 
 Function FindArchiveTrack(Location, ModDate, prefix)
-  Wscript.Echo Location
-
   Dim Pref, Casc, path, I, NewDate
   Pref = "N:\iTunes\iTunes Media\Podcasts"
   Casc = Array(Pref, Pref & " Over", Pref & " Over Over", Pref & " Over Over Over")
@@ -167,24 +207,37 @@ Sub LoadModLookup()
   count = Ubound(lines)
   For I=Lbound(lines) to count
     Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
-    Dim fields
+    Dim fields, location
     fields = Split(lines(I), vbTab)
-    If Ubound(fields) = 2 Then
-      AddModLookup LDate(fields(0)), fields(1), LDate(fields(2))
+    If Ubound(fields) = 4 Then
+      location = Replace(fields(1), "/", "\")
+      AddModLookup LDate(fields(0)), location, LDate(fields(2))
+      AddLocLookup CLng(fields(3)), CLng(fields(4)), location
     End If
   Next
   Wscript.Echo ""
 End Sub
 
 Sub AddModLookup(AddDate, Location, ModDate)
-  Wscript.Stdout.Write(AddDate & "     ")
+  Wscript.Stdout.Write AddDate & " \ "
   If Not ModLookup.Exists(AddDate) Then
     Dim dict
     Set dict = CreateObject("Scripting.Dictionary")
     ModLookup.Add AddDate, dict
   End If
-  ModLookup(AddDate).Add Replace(Location, "/", "\"), ModDate
+  ModLookup(AddDate).Add Location, ModDate
 End Sub
+
+Sub AddLocLookup(HiID, LoID, Location)
+  Wscript.Stdout.Write HiID & ", " & LoID & "     "
+  If Not LocLookup.Exists(HiID) Then
+    Dim dict
+    Set dict = CreateObject("Scripting.Dictionary")
+    LocLookup.Add HiID, dict
+  End If
+  LocLookup(HiID).Add LoID, Location
+End Sub
+
 
 '''
 ' Parse Zulu datestrings to local datetime
