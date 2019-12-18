@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
+import os
 import re
 import sys
 import couchdb
 import json
+
+LIBRARY = os.path.expanduser("~/Qnap/iTunes/iTunes Library.xml")
 
 def parseKeyValue(fp, line):
   m = re.match(r"<key>(.*)</key>(.*)", line)
@@ -58,7 +61,7 @@ def parseDict(fp, next):
   return dict
 
 def parseLibrary(db):
-  with open('../Qnap/iTunes/iTunes Library.xml', 'r') as fp:
+  with open(LIBRARY, 'r') as fp:
     while True:
       line = fp.readline().strip()
       if line == "<dict>": break
