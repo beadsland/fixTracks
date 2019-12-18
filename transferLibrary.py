@@ -2,6 +2,8 @@
 
 import re
 import sys
+import couchdb
+import json
 
 def parseKeyValue(fp, line):
   m = re.match(r"<key>(.*)</key>(.*)", line)
@@ -55,38 +57,52 @@ def parseDict(fp, next):
         dict[k] = v
   return dict
 
-with open('../Qnap/iTunes/iTunes Library.xml', 'r') as fp:
-  while True:
+def parseLibrary(db):
+  with open('../Qnap/iTunes/iTunes Library.xml', 'r') as fp:
+    while True:
+      line = fp.readline().strip()
+      if line == "<dict>": break
+
+    state = parseDict(fp, "<key>Tracks</key>")
+
+    while True:
+      line = fp.readline().strip()
+      if line == "<dict>": break
+
+    print("Parsing tracks...")
+
+    while True:
+      line = fp.readline().strip()
+      if line == "</dict>": break
+      m = re.match(r"<key>(.*)</key>", line)
+      key = m.group(1)
+      sys.stdout.write("> %s               \r" % key)
+
+      line = fp.readline().strip()
+      value = parseDict(fp, "</dict>")
+      value['iTunes Library'] = state
+      save_update(key, value)
+
     line = fp.readline().strip()
-    if line == "<dict>": break
+    if line == "<key>Playlists</key>":
+      print("\nDiscarding playlists...")
+      line = fp.readline().strip()
+      if line == "<array>": print(len(parseArray(fp)))
+      if line != "<array>": print("huh: %s" % line)
 
-  state = parseDict(fp, "<key>Tracks</key>")
+    while True:
+      line = fp.readline().strip()
+      if not line: break
+      print(line)
 
-  while True:
-    line = fp.readline().strip()
-    if line == "<dict>": break
+def save_update(key, value):
+  id = "Track %s" % key
+  doc = db.get(id, default={"_id": id})
+  doc["iTunes"] = value
+  db.save(doc)
 
-  print("Parsing tracks...")
+couch = couchdb.Server("http://192.168.2.52:4000/")
+couch.resource.credentials = ("itunes", "senuti")
+db = couch["audio_library"]
 
-  while True:
-    line = fp.readline().strip()
-    if line == "</dict>": break
-    m = re.match(r"<key>(.*)</key>", line)
-    key = m.group(1)
-    sys.stdout.write("> %s               \r" % key)
-
-    line = fp.readline().strip()
-    value = parseDict(fp, "</dict>")
-    value['iTunes Library'] = state
-
-  line = fp.readline().strip()
-  if line == "<key>Playlists</key>":
-    print("\nDiscarding playlists...")
-    line = fp.readline().strip()
-    if line == "<array>": print(len(parseArray(fp)))
-    if line != "<array>": print("huh: %s" % line)
-
-  while True:
-    line = fp.readline().strip()
-    if not line: break
-    print(line)
+parseLibrary(db)
