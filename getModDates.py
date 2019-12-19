@@ -96,7 +96,7 @@ def map_dates(kind):
 
         for j in range(len(kind[i])):
             if kind[i][j].tag=="key":
-              if kind[i][j].text in ["Date Modified", "Date Added", "Location", "Persistent ID"]:
+              if kind[i][j].text in ["Date Modified", "Date Added", "Location", "Persistent ID", "Play Count"]:
                 dict1[kind[i][j].text]=kind[i][j+1].text
 
         added = dict1["Date Added"]
@@ -105,23 +105,13 @@ def map_dates(kind):
         locat = urllib.parse.unquote(locat)
         # https://stackoverflow.com/questions/6727041/itunes-persistent-id-music-library-xml-version-and-itunes-hex-version
         (highID, lowID) = struct.unpack('!ii', binascii.a2b_hex(dict1["Persistent ID"]))
+        playc = int(dict1["Play Count"]) if "Play Count" in dict1 else 0
         if not locat.startswith("http://"):
           if dateutil.parser.parse(added) < THRESH:
-            f.write("%s\t%s\t%s\t%d\t%d\n" % (added, locat, modif, highID, lowID))
+            f.write("%s\t%s\t%s\t%d\t%d\t%d\n" % (added, locat, modif, highID, lowID, playc))
 
 
-#map_dates(podcast)
-
-
-def grab_tracks():
-    for i in range(len(kind)):
-        dict1 = {}
-        print("%d of %d" % (i, len(kind)), end='\r')
-
-        for j in range(len(kind[i])):
-            if kind[i][j].tag=="key":
-              if kind[i][j].text in ["Date Modified", "Date Added", "Location", "Persistent ID"]:
-                dict1[kind[i][j].text]=kind[i][j+1].text
+map_dates(podcast)
 
 
 

@@ -5,10 +5,11 @@ Dim iTunes, Tracks
 Set iTunes=CreateObject("iTunes.Application")
 Set Tracks=iTunes.LibraryPlaylist.Tracks
 
-Dim objStream, ModLookup, LocLookup, TZOffset
+Dim objStream, ModLookup, LocLookup, TZOffset, PlyLookup
 Set objStream = CreateObject("ADODB.Stream")
 Set ModLookup = CreateObject("Scripting.Dictionary")
 Set LocLookup = CreateObject("Scripting.Dictionary")
+Set PlyLookup = CreateObject("Scripting.Dictionary")
 TZOffset = GetTimeZoneOffset / 24
 
 Dim objFSO
@@ -21,7 +22,61 @@ Dim totalFound, totalSeen
 '''
 'FixArchives 1000, 21000
 'FixDriveLetter
-FindArchives False, False
+'FindArchives 76400, False
+'ClearMissingPlayed
+CountMissingPlayed
+
+Sub CountMissingPlayed()
+  LoadModLookup
+
+  Dim count, I, T, Location
+  count = Tracks.Count
+  For I = count To 1 Step -1
+    Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
+
+    Set T = Tracks(I)
+
+    Location = ""
+    On Error Resume Next
+    Location=T.Location
+    On Error Goto 0
+
+    If Location = "" Then
+
+      Wscript.Echo T.Name
+
+      Dim high, low
+      high = iTunes.ITObjectPersistentIDHigh(T)
+      low = iTunes.ITObjectPersistentIDLow(T)
+      Location = LocLookup(high)(low)
+
+      Set T=iTunes.LibraryPlaylist.Tracks.ItemByPersistentID(high, low)
+
+      Wscript.Echo PlyLookup(high)(low) & " " & Location
+    End If
+  Next
+End Sub
+
+
+
+Sub ClearMissingPlayed()
+  Dim count, I, T, Location
+  count = Tracks.Count
+  For I = count To 1 Step -1
+    Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
+
+    Set T = Tracks(I)
+
+    Location = ""
+    On Error Resume Next
+    Location=T.Location
+    On Error Goto 0
+
+    If Location = "" Then
+      FindMissingArchive T, Location
+    End If
+  Next
+End Sub
 
 '''
 ' Consolidate all files onto same drive
@@ -126,6 +181,7 @@ Sub FindMissingArchive(T, Location)
   Wscript.Echo T.Name
   Wscript.Echo Location
 
+  totalSeen = totalSeen + 1
   FixMissingArchive T, Location
 End Sub
 
@@ -155,7 +211,6 @@ Sub FixArchiveTrack(T, Location, prefix)
   AddDate = CDate(T.DateAdded)
   ModDate = ModLookup(AddDate)(Location)
 
-  totalSeen = totalSeen + 1
   Dest = FindArchiveTrack(Location, ModDate, prefix)
   if Dest <> False Then
     Wscript.Echo Dest
@@ -176,7 +231,7 @@ Function FindArchiveTrack(Location, ModDate, prefix)
     If objFSO.FileExists(path) Then
       NewDate = objFSO.GetFile(path).DateCreated
       For I = -1 to +1
-        If CDate(Cstr(NewDate + I/24)) = ModDate Then
+        If Abs(CDate(Cstr(NewDate + I/24)) - ModDate) < 5*60 Then
           FindArchiveTrack = path
           Exit Function
         Else
@@ -209,13 +264,24 @@ Sub LoadModLookup()
     Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
     Dim fields, location
     fields = Split(lines(I), vbTab)
-    If Ubound(fields) = 4 Then
+    If Ubound(fields) = 5 Then
       location = Replace(fields(1), "/", "\")
       AddModLookup LDate(fields(0)), location, LDate(fields(2))
       AddLocLookup CLng(fields(3)), CLng(fields(4)), location
+      AddPlyLookup CLng(fields(3)), CLng(fields(4)), Cint(fields(5))
     End If
   Next
   Wscript.Echo ""
+End Sub
+
+Sub AddPlyLookup(HiID, LoID, PlayCount)
+  Wscript.Stdout.Write " \ " & PlayCount & "     "
+  If Not PlyLookup.Exists(HiID) Then
+    Dim dict
+    Set dict = CreateObject("Scripting.Dictionary")
+    PlyLookup.Add HiID, dict
+  End If
+  PlyLookup(HiID).Add LoID, PlayCount
 End Sub
 
 Sub AddModLookup(AddDate, Location, ModDate)
@@ -229,7 +295,7 @@ Sub AddModLookup(AddDate, Location, ModDate)
 End Sub
 
 Sub AddLocLookup(HiID, LoID, Location)
-  Wscript.Stdout.Write HiID & ", " & LoID & "     "
+  Wscript.Stdout.Write HiID & ", " & LoID
   If Not LocLookup.Exists(HiID) Then
     Dim dict
     Set dict = CreateObject("Scripting.Dictionary")
@@ -237,7 +303,6 @@ Sub AddLocLookup(HiID, LoID, Location)
   End If
   LocLookup(HiID).Add LoID, Location
 End Sub
-
 
 '''
 ' Parse Zulu datestrings to local datetime
