@@ -101,6 +101,7 @@ def parseLibrary(db):
 def save_update(key, value):
   id = "Track %s" % key
   doc = db.get(id, default={"_id": id})
+  value["_revdate"] = value["iTunes Library"]["Date"]
   doc["iTunes"] = value
   db.save(doc)
 
