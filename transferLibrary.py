@@ -15,9 +15,10 @@ def is_int(v):
   else: return True
 
 def is_float(v):
+  if len(v) >= 16: return False
   try: float(v)
   except ValueError: return False
-  else: return True
+  else: return float(v) != float("inf")
 
 def parseKeyValue(fp, line):
   m = re.match(r"<key>(.*)</key>(.*)", line)
