@@ -4,9 +4,20 @@ import os
 import re
 import sys
 import couchdb
-import json
+import html
+import urllib
 
 LIBRARY = os.path.expanduser("~/Qnap/Data/iTunes/iTunes Library.xml")
+
+def is_int(v):
+  try: int(v)
+  except ValueError: return False
+  else: return True
+
+def is_float(v):
+  try: float(v)
+  except ValueError: return False
+  else: return True
 
 def parseKeyValue(fp, line):
   m = re.match(r"<key>(.*)</key>(.*)", line)
@@ -23,7 +34,9 @@ def parseKeyValue(fp, line):
   n = re.match(r"<[^>]+>([^<]+)</[^>]+>", value)
   if n is not None:
     value = n.group(1)
-    return key, value
+    if is_int(value): return key, int(value)
+    if is_float(value): return key, float(value)
+    return key, urllib.parse.unquote(html.unescape(value))
   else:
     print("fail: %s" % value)
     exit()
