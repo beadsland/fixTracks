@@ -84,7 +84,7 @@ def parseLibrary(db):
       line = fp.readline().strip()
       value = parseDict(fp, "</dict>")
       value['iTunes Library'] = state
-      save_update(key, value)
+      save_update(value)
 
     line = fp.readline().strip()
     if line == "<key>Playlists</key>":
@@ -98,8 +98,8 @@ def parseLibrary(db):
       if not line: break
       print(line)
 
-def save_update(key, value):
-  id = "Track %s" % key
+def save_update(value):
+  id = "Persistent ID %s" % value["Persistent ID"]
   doc = db.get(id, default={"_id": id})
   value["_revdate"] = value["iTunes Library"]["Date"]
   doc["iTunes"] = value
