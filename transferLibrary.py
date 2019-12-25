@@ -6,7 +6,7 @@ import sys
 import couchdb
 import json
 
-LIBRARY = os.path.expanduser("~/Qnap/iTunes/iTunes Library.xml")
+LIBRARY = os.path.expanduser("~/Qnap/Data/iTunes/iTunes Library.xml")
 
 def parseKeyValue(fp, line):
   m = re.match(r"<key>(.*)</key>(.*)", line)
