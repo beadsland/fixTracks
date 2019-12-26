@@ -37,9 +37,9 @@ Sub FixDoubleSlash()
     Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
     Set T = PersistentObject(Tracks(I))
     If T.Kind=1 Then
-      If Instr(T.Location, "iTunes Media//Podcast") Then
+      If Instr(T.Location, "iTunes%20Media//Podcasts") Then
             Wscript.Echo T.Location
-            newstr = Replace(T.Location, "iTunes Media//Podcast", "iTunes Media/Podcast")
+            newstr = Replace(T.Location, "iTunes%20Media//Podcasts", "iTunes%20Media/Podcasts")
             T.Location = newstr
       End If
     End If
