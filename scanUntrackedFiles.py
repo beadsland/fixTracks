@@ -65,6 +65,7 @@ couch.resource.credentials = ("itunes", "senuti")
 db = couch['audio_library']
 for id in db:
   if db[id]['iTunes']['Track Type'] == "URL": continue
+  if db[id]['iTunes']['Location'].startswith("file://localhost/N:/Torrents/"): continue
 
   pref = db[id]['iTunes']['iTunes Library']['Music Folder']
   path = db[id]['iTunes']['Location'].replace(pref, "")
