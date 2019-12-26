@@ -64,6 +64,8 @@ couch = couchdb.Server("http://192.168.2.52:4000")
 couch.resource.credentials = ("itunes", "senuti")
 db = couch['audio_library']
 for id in db:
+  if db[id]['iTunes']['Track Type'] == "URL": continue
+
   pref = db[id]['iTunes']['iTunes Library']['Music Folder']
   path = db[id]['iTunes']['Location'].replace(pref, "")
   print("\nSeeking %s: %s..." % (id, path))
