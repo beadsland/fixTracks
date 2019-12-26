@@ -24,7 +24,29 @@ Dim totalFound, totalSeen
 'FixDriveLetter
 'FindArchives 76400, False
 'ClearMissingPlayed
-CountMissingPlayed
+'CountMissingPlayed
+
+FixDoubleSlash
+
+Sub FixDoubleSlash()
+  Wscript.Echo "Fixing double slash..."
+
+  Dim I, Location, T, count, letter, newstr
+  count = Tracks.Count
+  For I = 1 to count
+    Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
+    Set T = PersistentObject(Tracks(I))
+    If T.Kind=1 Then
+      If Instr(T.Location, "iTunes Media//Podcast") Then
+            Wscript.Echo T.Location
+            newstr = Replace(T.Location, "iTunes Media//Podcast", "iTunes Media/Podcast")
+            T.Location = newstr
+      End If
+    End If
+  Next
+  Wscript.Echo ""
+  Wscript.Echo "Found " & totalFound & " of " & totalSeen
+End Sub
 
 Sub CountMissingPlayed()
   LoadModLookup
@@ -56,8 +78,6 @@ Sub CountMissingPlayed()
     End If
   Next
 End Sub
-
-
 
 Sub ClearMissingPlayed()
   Dim count, I, T, Location
