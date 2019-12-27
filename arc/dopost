@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import warnings
+warnings.simplefilter("ignore");
+
+
+import gpod
+import lib.track
+
+db = gpod.Database("/media/ipod")
+plays = {pl.get_name(): pl for pl in db.get_playlists()}
+
+new = lib.track.generate(plays['1 - Breaking News'])
+old = lib.track.generate(plays['2 - Historical'])
+
+
+import lib.order
+
+new = lib.order.unplayed(new)
+old = lib.order.unplayed(old)
+
+old = lib.order.stagger(old, 'album', 1)
+
+result = lib.order.collate(old, new, 1)
+
+for i in range(1, 20):
+  t = next(result)
+  print( str(t)[:70] )
+
+
+#print plays['1 - Breaking News'][0].keys()

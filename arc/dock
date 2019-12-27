@@ -1,0 +1,24 @@
+#!/usr/bin/env python3.6
+
+from lib.sudo import run_sudo
+run_sudo()
+
+import lib.mon
+import math
+import time
+import itertools
+
+spinner = itertools.cycle("/\\")
+secs = 0
+
+
+while 1:
+  time.sleep(1)
+  secs = secs + 1
+  print( secs,
+         "*" * int(math.log( 1 + lib.mon.flin.current(), 5 )),
+         next(spinner),
+         "*" * int(math.log( 1 + lib.mon.flout.current(), 5 )),
+         lib.mon.flin.current(),
+	 lib.mon.flout.current() )
+
