@@ -30,22 +30,35 @@ FixDoubleSlash
 
 Sub FixDoubleSlash()
   Wscript.Echo "Fixing double slash..."
+  Dim first, last
+  first = 60000
 
-  Dim I, Location, T, count, letter, newstr
-  count = Tracks.Count
-  For I = 1 to count
+  Dim start, count
+  start = IIF(first, first, 1)
+  count = IIF(last, last, Tracks.Count)
+
+  Dim I, Location, T
+  For I = start to count
     Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
-    Set T = PersistentObject(Tracks(I))
-    If T.Kind=1 Then
-      If Instr(T.Location, "iTunes%20Media//Podcasts") Then
-            Wscript.Echo T.Location
-            newstr = Replace(T.Location, "iTunes%20Media//Podcasts", "iTunes%20Media/Podcasts")
+    Set T = Tracks(I)
+
+    if T.KindAsString <> "PDF document" Then
+      Location = ""
+      On Error Resume Next
+      Location=T.Location
+      On Error Goto 0
+
+      If InStr(Location, "\\") Then
+        Set T = PersistentObject(Tracks(I))
+        If T.Kind=1 Then
+            Dim newstr
+            Wscript.Echo Location
+            newstr = Replace(Location, "iTunes Media\\Podcasts", "iTunes Media\Podcasts")
             T.Location = newstr
+        End If
       End If
     End If
   Next
-  Wscript.Echo ""
-  Wscript.Echo "Found " & totalFound & " of " & totalSeen
 End Sub
 
 Sub CountMissingPlayed()

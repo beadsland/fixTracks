@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # https://medium.com/@leojosefm/python-analyzing-itunes-library-97bec60e13cb
 
 import pandas as pd
@@ -7,8 +9,9 @@ import struct
 import binascii
 import dateutil.parser
 import datetime
+import os
 
-lib='../../iTunes/iTunes Library.xml'
+lib=os.path.expanduser("~/Qnap/Data/iTunes/iTunes Library.xml")
 
 print("Parsing file...")
 
