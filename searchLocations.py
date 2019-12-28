@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-find = "An Alexander Technique Student talks 1"
+find = sys.argv[0]
 
 import re
 import couchdb
