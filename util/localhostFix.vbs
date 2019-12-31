@@ -37,7 +37,7 @@ Sub FixiTunesUSoftlink()
     Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
     Set T = PersistentObject(Tracks(I))
     If T.Kind=1 Then
-        If InStr(T.Location, "\iTunes U\") = 1 Then
+        If InStr(T.Location, "\iTunes U\") Then
             Wscript.Echo T.Location
             newstr = Replace(T.Location, "\iTunes U\", "\Podcasts\")
             T.Location = newstr
