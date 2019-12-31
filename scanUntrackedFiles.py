@@ -51,9 +51,10 @@ class Folder:
 
 
 print("Assembling paths...")
-dirs = ["Downloads", "iPod only", "Broadcast", "Music", "iTunes U"]
+dirs = ["Downloads", "iPod only", "Broadcast", "Music"]
 dirs = dirs + ["Podcasts%s" % (" Over"*i) for i in range(0, 4)]
 dirs = {f: Folder(os.path.join(root, "iTunes Media", f)) for f in dirs}
+dirs["iTunes U"] = dirs["Podcasts"]  # This one's a softlink
 dirs = {"Podcasts": Folder(os.path.join(root, "Podcasts")),
         "iTunes Media": Folder(os.path.join(root, "iTunes Media"), dirs)}
 
