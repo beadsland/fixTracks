@@ -27,6 +27,33 @@ Dim totalFound, totalSeen
 'CountMissingPlayed
 'FixDoubleSlash
 
+FixiTunesUSoftlink
+Sub FixiTunesUSoftlink()
+  Wscript.Echo "Fixing iTunes U softlink..."
+
+  Dim Letters
+  Letters = Array("C", "E", "G")
+
+  Dim I, Location, T, count, letter, newstr
+  count = Tracks.Count
+  For I = 1 to count
+    Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
+    Set T = PersistentObject(Tracks(I))
+    If T.Kind=1 Then
+      For Each letter in Letters
+        If InStr(T.Location, letter & "\iTunes U\") = 1 Then
+            Wscript.Echo T.Location
+            newstr = Replace(T.Location, letter & "\iTunes U\", "\Podcasts\")
+            T.Location = newstr
+        End If
+      Next
+    End If
+  Next
+  Wscript.Echo ""
+  Wscript.Echo "Found " & totalFound & " of " & totalSeen
+End Sub
+
+
 Sub FixDoubleSlash()
   Wscript.Echo "Fixing double slash..."
   Dim first, last
