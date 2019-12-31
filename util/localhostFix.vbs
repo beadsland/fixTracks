@@ -32,6 +32,7 @@ FindPlaylistDups("On Being")
 Sub FindPlaylistDups(term)
   Wscript.Echo "Finding playlist dups..."
 
+  Dim first, last
   Dim start, count
   start = IIF(first, first, 1)
   count = IIF(last, last, Tracks.Count)
