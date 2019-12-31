@@ -1,0 +1,4 @@
+requires libgpod -- http://www.gtkpod.org/libgpod/
+
+This appears to be the most up-to-date version
+  https://github.com/jburton/libgpod.git
