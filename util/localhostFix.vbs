@@ -27,34 +27,6 @@ Dim totalFound, totalSeen
 'CountMissingPlayed
 'FixDoubleSlash
 
-FindPlaylistDups("On Being")
-
-Sub FindPlaylistDups(term)
-  Wscript.Echo "Finding playlist dups..."
-
-  Dim first, last
-  Dim start, count
-  start = IIF(first, first, 1)
-  count = IIF(last, last, Tracks.Count)
-
-  Dim I, Location, T
-  For I = count to start step -1
-    Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
-    Set T = Tracks(I)
-
-    if T.KindAsString <> "PDF document" Then
-      Location = ""
-      On Error Resume Next
-      Location=T.Location
-      On Error Goto 0
-
-      If InStr(Location, term) Then
-        Wscript.Echo Location
-      End If
-    End If
-  Next
-End Sub
-
 Sub FixDoubleSlash()
   Wscript.Echo "Fixing double slash..."
   Dim first, last
