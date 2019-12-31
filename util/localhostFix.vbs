@@ -31,15 +31,15 @@ FixiTunesUSoftlink
 Sub FixiTunesUSoftlink()
   Wscript.Echo "Fixing iTunes U softlink..."
 
-  Dim I, Location, T, count, letter, newstr
+  Dim I, Location, T, count, newstr
   count = Tracks.Count
   For I = 1 to count
     Wscript.Stdout.Write chr(13) & "# " & I & " of " & count & " > "
     Set T = PersistentObject(Tracks(I))
     If T.Kind=1 Then
-        If InStr(T.Location, letter & "\iTunes U\") = 1 Then
+        If InStr(T.Location, "\iTunes U\") = 1 Then
             Wscript.Echo T.Location
-            newstr = Replace(T.Location, letter & "\iTunes U\", "\Podcasts\")
+            newstr = Replace(T.Location, "\iTunes U\", "\Podcasts\")
             T.Location = newstr
         End If
     End If
