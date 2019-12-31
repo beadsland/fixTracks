@@ -11,4 +11,4 @@ db = gpod.Database(path, None)
 #gpod.itdb_device_set_sysinfo (db._itdb.device, "ModelNumStr", "xC293");
 
 for track in db:
-  print(track['title'])
+    print hex(track['dbid']), track
