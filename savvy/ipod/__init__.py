@@ -7,6 +7,7 @@
 # so that we can later swap the CouchDB interface in seamlessly.
 
 import gpod
+import datetime
 
 class Database:
   def __init__(self, path):
@@ -20,6 +21,27 @@ class Database:
     if self.n < len(self.db):
       result = self.db[self.n]
       self.n = self.n + 1
-      return result
+      return Track(result)
     else:
       raise StopIteration
+
+# Abstract away access to track information. This will allow us to conform
+# ipod, itunes and rss feeds that use different names for the same fields.
+class Track:
+  def __init__(self, track):
+    self.track = Track
+
+  def _str__(self):
+    return str(self.track)
+
+  def get(self, key):
+    return self.track[key]
+
+  def get_date(self, key, min=True):
+    try:
+      return self.get(key)
+    except:
+      if min:
+        return datetime.datetime.min
+      else:
+        return None
