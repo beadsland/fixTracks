@@ -29,10 +29,12 @@ class Database:
 # ipod, itunes and rss feeds that use different names for the same fields.
 class Track:
   def __init__(self, track):
-    self.track = Track
+    self.track = track
 
-  def _str__(self):
-    return str(self.track)
+  def __repr__(self):
+    my_class = self.__class__
+    return "<%s.%s: %s [%s]>" % (my_class.__module__, my_class.__name__,
+                            self.get('title'), self.get('album'))
 
   def get(self, key):
     return self.track[key]
