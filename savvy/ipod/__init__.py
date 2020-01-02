@@ -47,3 +47,5 @@ class Track:
         return datetime.datetime.min
       else:
         return None
+
+  def date_released(self): return self.get_date('time_released')
