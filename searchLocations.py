@@ -19,3 +19,5 @@ for id in db:
 
   if re.search(find, path, re.IGNORECASE):
     print("\n%s" % path)
+
+print("\n")
