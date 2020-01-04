@@ -4,7 +4,9 @@ import re
 import couchdb
 import sys
 
-find = sys.argv[0]
+find = sys.argv[1]
+
+print("Seeking: %s" % find)
 
 couch = couchdb.Server("http://192.168.2.52:4000")
 couch.resource.credentials = ("itunes", "senuti")
