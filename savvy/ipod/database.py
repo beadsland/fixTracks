@@ -16,3 +16,15 @@ class Database:
       return savvy.ipod.track.Track(result)
     else:
       raise StopIteration
+
+  def __del__(self):
+    print "Committing changes to iPod database. Please wait..."
+    self.close
+    print "Done"
+
+  def close(self):
+    self.db.copy_delayed_files()
+    self.db.close()
+
+  def playlists(self):
+    return {p.name: p for p in self.db.get_playlists()}
