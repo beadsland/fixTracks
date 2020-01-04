@@ -41,5 +41,19 @@ class Database:
   def playlists(self):
     return {p.name: p for p in self.db.get_playlists()}
 
+  def get_playlist(self, name):
+    return self.playlists()[name]
+
   def add_playlist(self, name):
     return self.db.new_Playlist(title=name) # weird case in case weird
+
+  def wipe_playlist(self, name):
+    if name not in self.playlists():
+      self.add_playlist(name)
+
+    plist = self.get_playlist(name)
+
+    for track in reversed(plist):
+      plist.remove(track)
+
+    return plist
