@@ -13,6 +13,14 @@ savvy.ipod.ball(path, "/media/removable/microSD/back")
 print "Loading ipod database..."
 db = savvy.ipod.load(path)
 
-forward = sorted(db, key = lambda track: track.date_released())
+print db.playlists()
 
-print(forward[:20])
+if "Podcasts" in db.playlists():
+  print "There!"
+  
+if "Savvy Playlist" not in db.playlists():
+  print "Not there!"
+
+#forward = sorted(db, key = lambda track: track.date_released())
+
+#print(forward[:20])
