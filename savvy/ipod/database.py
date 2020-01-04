@@ -3,6 +3,8 @@ import savvy.ipod.track
 import os
 import usb.core
 
+IPOD_CTRL = "iPod_Control"
+
 class Database:
   def __init__(self, path):
     import gpod
@@ -29,6 +31,11 @@ class Database:
   def close(self):
     self.db.copy_delayed_files()
     self.db.close()
+
+    # Temporary fix until we're ready to commit this data to a database
+    playcounts = os.path.join(self.path, IPOD_CTRL, 'iTunes', 'Play Counts')
+    os.rename("%s.bak" % playcounts, playcounts)
+
 #    os.system("umount \"%s\"" % self.path)
 
   def playlists(self):
