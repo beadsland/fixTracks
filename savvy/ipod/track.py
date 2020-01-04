@@ -11,6 +11,9 @@ class Track:
     return "<%s.%s: %s [%s]>" % (my_class.__module__, my_class.__name__,
                             self.get('title'), self.get('album'))
 
+  def as_libgpod(self):
+    return self.track
+
   def get(self, key):
     return self.track[key]
 
