@@ -65,9 +65,13 @@ news tracks.
 
 Some podcast feeds will drop multiple tracks on or around the same release
 datetime. This can sometimes result in many hours of content from a single feed
-being clustered together to the exclusion of other feeds. A staggered playlist
-would track how many minutes have been allotted to each feed, and--as per
-collation--defer serving tracks from feeds that are already over-represented.
+being clustered together to the exclusion of other feeds. This is also an issue
+for historical playlists with tracks that predate most of the rest of the
+library or were published without a release date.
+
+A staggered playlist would track how many minutes have been allotted to each
+feed, and--as per collation--defer serving tracks from feeds that are already
+over-represented, until such time as other feeds have filled in the playlist.
 
 The staggering (and also the aforementioned collation) feature would take into
 account play history, such that playlists that, for instance, only include
