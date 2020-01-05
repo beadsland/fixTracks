@@ -18,7 +18,6 @@ def ball(path, dest = None):
   output = os.path.join(dest, output)
 
   with tarfile.open(output, "w:gz") as tar:
-
     folder = os.path.join(path, IPOD_CTRL, 'Device')
     tar.add(folder, arcname='Device')
     folder = os.path.join(path, IPOD_CTRL, 'iTunes')
