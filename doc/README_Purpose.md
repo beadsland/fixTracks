@@ -41,7 +41,7 @@ Android, and pod-kintosh Pi front-ends.
 
 ## Performance
 
-The current iTunes Library.itl file is just shy of 75 megabytes, which iTunes
+The current `iTunes Library.itl` file is just shy of 75 megabytes, which iTunes
 somehow expands to over half a gigabyte of active system memory when loaded.
 Unfortunately, iTunes seems not to be optimized for managing large data sets,
 as every UI operation, including switching views and scrolling through listings,
