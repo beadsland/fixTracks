@@ -1,79 +1,13 @@
 [Back to Top](../README.md)
 
-# README: Status
+# README: Database
 
-The fixTracks project involves three different development prongs: fleshing
-out installation of the libgpod shared libraries and bindings, cleaning up the
-existing iTunes database, and prototyping scripts to manage the savvy playlists
-and database on a Classic iPod.
-
-## libgpod
-
-Developed as part of the gtkpod project, [libgpod](http://www.gtkpod.org/libgpod/)
-is a project that provides shared libraries and bindings for reading and writing
-data to Apple iPod devices.
-
-The official release of this project is a SourceForge project from 2011, while
-the development branch was last touched in 2013 (with documentation edits in
-2014). Several clones of the project appear on github, the most up-to-date of
-which appears to be this:
-
-  https://github.com/jburton/libgpod.git
-
-_NOTE: This prong is on holding final database transfer and a working_ savvy
-_playlist prototype for the Classic iPod._
-
-### Build Process
-
-The current version relies on libraries and toolchain that is largely deprecated,
-when not outright abandoned in modern distributions. One configuration step
-seeks a version of a build tool above a certain version, and then hard-codes
-checks for that version and the next N versions only. The current version of
-said tool is several version past that check. Meanwhile, the most recent versions
-of some build tools introduce changes that break the build process.
-
-Including ferreting out where missing libraries and dependencies might be hiding,
-the build process for libgpod can take hours. Even then, one has to pay careful
-attention to the messages coming from the configuration scripts, as it is
-entirely possible to successfully build and install libgpod without any bindings
-being built or installed.
-
-Also, the libgpod bindings for python are only for python 2 and are exposed via
-`import gpod`. Unfortunately, there's another package available for pip
-install from PyPI, a "general purpose object detector", which is also identified
-as gpod. Needless to say, this can make for some confusion.
-
-### Streamlining
-
-Streamlining libgpod builds will proceed in several steps:
-
- 1. Document the steps required to get up and running on a fresh install of
- Ubuntu Bionic.
-
- 2. Create and distribute a docker container preconfigured with a fully built
- and installed version.
-
- 3. Build a cmake project to generate builds for legacy libraries and toolchain
- dependencies.
-
- 4. Consolidate merges from other github forks.
-
- 5. Merge in latest development branch from SourceForge.
-
- 6. Progressively upgrade build toolchain, to bring build environment current.
-
- 7. Rename python bindings and provide bindings for python3.
-
- 8. Write NIFs for using libgpod from Elixir and other BEAM languages.
-
-## Database
-
-Cleaning up and migrating the iTunes database involves four steps: fixing legacy
+Cleaning up and migrating the iTunes database involves five steps: fixing legacy
 file paths, transferring the library to CouchDB, repairing duplicated tracks and
 case-sensitive file paths, archiving orphaned audio files, implementing downloads
 from podcast feeds.
 
-### Legacy Paths
+## 1. Legacy Paths
 
 Over the years, the iTunes database has been moved from one portable hard drive
 to another, and eventually to network shares from various file servers. Meanwhile,
@@ -88,7 +22,7 @@ iTunes 12 and thereafter, but as we froze iTunes at 11 to avoid Apple's efforts
 to lock down the iTunes database in later versions, that feature has remained
 unavailable.
 
-#### Sharding and Naming
+### Sharding and Naming
 
 Manual sharding was accomplished by inspecting the folders of those podcasts
 consuming the largest share of hard drive space, selecting a release year midway
@@ -109,7 +43,7 @@ As a result, when files were consolidated on the RAID, there were filename
 collisions. When those happen, the duplicates were stored to parallel folder
 systems for later linkage back to the appropriate tracks.
 
-#### Repair Process
+### Repair Process
 
 Tools exist to repair iTunes database path names, including commercial software
 products and freeware Visual Basic Scripts designed to address typical use cases.
@@ -133,7 +67,7 @@ This process is now finished, and the scripts involved in the process,
 `getModDates.py` and `localhostFix.vbs` are retained in the util/ directory of
 this project for archival purposes.
 
-### Data Transfer
+## 2. Data Transfer
 
 This has been a relatively simple process of parsing the backup XML file from
 iTunes and pushing the same data to a fresh CouchDB database. Well, not entirely
@@ -144,7 +78,7 @@ lookup tables for properties unexposed to VBscript, above.
 Thankfully, this process is simple enough that it can be done repeatedly while
 resolving duplicates and case-sensitivity issues, below.
 
-### Dups and Case-Sensitivity
+## 3. Dups and Case-Sensitivity
 
 In addition to duplicates being introduced by redownloads of feeds by iTunes,
 and filename collisions, it is also surprisingly easy to slip at the keyboard
@@ -185,7 +119,7 @@ underlying file is simply missing, we delete the track that references it.
 
 We then return to Step 1 above and repeat.
 
-### Orphan Files
+## 4. Orphan Files
 
 Any files that cannot be tied back to a track in the database at the end of this
 process will be added to the CouchDB database as an orphaned track record.
@@ -193,7 +127,7 @@ Orphaned tracks will be prioritized, by age, for subsequent archival and weeding
 by the new media management system, ahead of all tracks on the tail of the
 master playlist.
 
-### Feed Downloads
+## 5. Feed Downloads
 
 The last step in transferring the iTunes database to CouchDB will involve
 replacing the feature of downloading new episodes of podcast feeds. Initially,
@@ -203,47 +137,3 @@ Elixir app, that will run on the RAID.
 
 Once the prototype version of podcast feed downloads is implemented, full
 retirement of the iTunes system will be achieved.
-
-## Prototype
-
-Ultimately, the plan is for a full-fledged media management server and peer-to-
-peer file server, written in Elixir, coupled with an iPod synchronization client,
-probably written in Rust, an podkintosh Pi implementation, and eventually an
-Android client.
-
-Initially, I just want to get something up and running, and so I'm building out
-a working prototype script in Python2. The prototype, when finished, will perform
-the following steps when run:
-
-  1. Resolve any replication conflicts in the CouchDB database.
-  2. Download new episodes of podcasts.
-  3. Read the iPod database and update the CouchDB database accordingly.
-  4. Generate a savvy playlist that implements collation and staggering based
-  on unplayed tracks present on the iPod.
-  5. Push database with new playlist to iPod.
-  5. Begin a track update loop that runs until finished or user interrupts.
-  6. Unmount and unbind iPod, so that screen stops flashing "Do Not Disconnect".
-
-The track update loop will perform the following steps:
-
-  1. Generate a savvy playlist based on all tracks in CouchDB.
-  2. Clone first file in second playlist absent in first from file server to
-  local machine.
-  3. Copy same file to iPod.
-  4. Regenerate savvy playlist based on iPod contents and push to iPod (as an
-  async process)
-  5. Repeat until user interrupt received.
-
-Work began on prototyping in 2018, at which time the plan had been to develop
-an Orange Pi Zero-based docking station for a Classic iPod, including an LED
-matrix for displaying data transfer status. We may eventually return to this
-design. For now, these files are retained under arc/ for reference.
-
-The current prototype successfully transfers a mock playlist to a Classic iPod.
-
-Currently efforts are focused on unbinding the Classic iPod as a USB device.
-Unfortunately, detaching alone, while making the iPod inaccessible from the OS,
-does not signal to the iPod that it is safe to disconnect, so the message
-"**Do Not Disconnect**" continues to flash on the device screen. That said,
-ubinding requires sudoer's rights, so we'll need a system service to do the heavy
-lifting.
