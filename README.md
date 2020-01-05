@@ -22,6 +22,20 @@ entire architecture is referred to as _savvy_ playlists.
 
 _See_ [README: Playlists](doc/README_Playlists.md)
 
+# TODO
+
+Currently efforts are focused on unbinding the Classic iPod as a USB device.
+Unfortunately, detaching alone, while making the iPod inaccessible to the OS,
+does not signal to the iPod that it is safe to disconnect, so the message
+"**Do Not Disconnect**" continues to flash on the device screen. That said,
+ubinding requires sudoer's rights, so we'll need a system service to do the heavy
+lifting.
+
+Also, it appears that even when libgpod does not add or remove data, the database
+saved back to the iPod is notably smaller than the one that existed immediately
+prior to libgpod intervention. Will need to investigate and determine if this
+represents data loss or merely greater efficiency.
+
 # Status
 
 The fixTracks project involves three different development prongs: fleshing
@@ -59,12 +73,13 @@ the following steps when run:
 
   1. Resolve any replication conflicts in the CouchDB database.
   2. Download new episodes of podcasts.
-  3. Read the iPod database and update the CouchDB database accordingly.
-  4. Generate a savvy playlist that implements collation and staggering based
+  3. Back up the iPod database before fiddling with it.
+  4. Read the iPod database and update the CouchDB database accordingly.
+  5. Generate a savvy playlist that implements collation and staggering based
   on unplayed tracks present on the iPod.
-  5. Push database with new playlist to iPod.
-  5. Begin a track update loop that runs until finished or user interrupts.
-  6. Unmount and unbind iPod, so that screen stops flashing "Do Not Disconnect".
+  6. Push database with new playlist to iPod.
+  7. Begin a track update loop that runs until finished or user interrupts.
+  8. Unmount and unbind iPod, so that screen stops flashing "Do Not Disconnect".
 
 The track update loop will perform the following steps:
 
@@ -84,10 +99,3 @@ matrix for displaying data transfer status. We may eventually return to this
 design. For now, these files are retained under arc/ for reference.
 
 The current prototype successfully transfers a mock playlist to a Classic iPod.
-
-Currently efforts are focused on unbinding the Classic iPod as a USB device.
-Unfortunately, detaching alone, while making the iPod inaccessible to the OS,
-does not signal to the iPod that it is safe to disconnect, so the message
-"**Do Not Disconnect**" continues to flash on the device screen. That said,
-ubinding requires sudoer's rights, so we'll need a system service to do the heavy
-lifting.
