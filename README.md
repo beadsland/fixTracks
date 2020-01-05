@@ -20,6 +20,8 @@ for chaining features together in pipelines. The typical use-case will involve
 multiple pipelines consolidated into one or more master listening playlists. The
 entire architecture is referred to as _savvy_ playlists.
 
+Also, need a strategy to avoid name-clashes when returning Playlists as a dict.
+
 _See_ [README: Playlists](doc/README_Playlists.md)
 
 # TODO
