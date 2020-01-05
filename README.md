@@ -4,7 +4,23 @@ and improved performance in managing large, even distributed, podcast libraries.
 
 # Purpose
 
+I currently maintain a 2 terabyte library of podcasts, which I listen to in a
+somewhat unconventional manner. I've found that iTunes is increasingly inadequate
+as a platform, and so I'm building out a custom media management system.
+
 _See_ [README: Purpose](doc/README_Purpose.md)
+
+In particular, there are a number of methods for constructing playlists that,
+while trivial to implement, are simply unavailable in iTunes, even using smart
+playlists. These serve admittedly odd use-cases, but as they are my, personal,
+use-cases, that's what I'm building for.
+
+Playlist design would offer more complex features for organizing tracks and also
+for chaining features together in pipelines. The typical use-case will involve
+multiple pipelines consolidated into one or more master listening playlists. The
+entire architecture is referred to as _savvy_ playlists.
+
+_See_ [README: Playlists](doc/README_Playlists.md)
 
 # Status
 
