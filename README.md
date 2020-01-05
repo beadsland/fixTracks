@@ -71,10 +71,12 @@ The track update loop will perform the following steps:
   1. Generate a savvy playlist based on all tracks in CouchDB.
   2. Clone first file in second playlist absent in first from file server to
   local machine.
-  3. Copy same file to iPod.
-  4. Regenerate savvy playlist based on iPod contents and push to iPod (as an
+  3. Short-circuit to Step 7, if user interrupt received.
+  4. Copy same file to iPod.
+  5. Regenerate savvy playlist based on iPod contents and push to iPod (as an
   async process)
-  5. Repeat until user interrupt received.
+  6. Repeat from Step 1, unless user interrupt received.
+  7. Wait for async process to finish and terminate.
 
 Work began on prototyping in 2018, at which time the plan had been to develop
 an Orange Pi Zero-based docking station for a Classic iPod, including an LED
