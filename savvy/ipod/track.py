@@ -26,4 +26,6 @@ class Track:
       else:
         return None
 
-  def date_released(self): return self.get_date('time_released')
+  def get_date_released(self): return self.get_date('time_released')
+
+  date_released = property(get_date_released)
