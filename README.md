@@ -26,18 +26,10 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 # TODO
 
-Currently efforts are focused on unbinding the Classic iPod as a USB device.
-Unfortunately, detaching alone, while making the iPod inaccessible to the OS,
-does not signal to the iPod that it is safe to disconnect, so the message
-"**Do Not Disconnect**" continues to flash on the device screen. That said,
-ubinding requires sudoer's rights, so we'll need a system service to do the heavy
-lifting.
-
-Also:
- * Refactor dump in preparation for pushing to CouchDB
- * Dump needs also to capture and push \_Itdb_Artwork objects
  * transferLibrary ought to mark tracks no longer in iTunes as deleted
  * scanUntrackedFiles should ignore "deleted" files
+ * Refactor dump in preparation for pushing to CouchDB
+ * Dump needs also to capture and push \_Itdb_Artwork objects
 
 # Status
 
