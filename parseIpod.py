@@ -8,9 +8,13 @@ name = "Savvy Playlist"
 
 plist = db.wipe_playlist(name)
 
-forward = sorted(db, key = lambda track: track.date_released)
+tracks = sorted(db, key = lambda track: track.date_released, reverse = True)
+tracks = [t for t in tracks if not t.playcount]
 
-for track in forward[:10]:
+for t in tracks[:10]:
+  print t.playcount, t.tracklen_time, t.bookmark_time, t.tracklen_time - t.bookmark_time, t
+
+for track in tracks[:100]:
   plist.add(track.as_libgpod())
 
 print plist

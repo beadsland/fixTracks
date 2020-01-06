@@ -26,6 +26,7 @@ class Track:
       else:
         return None
 
-  def get_date_released(self): return self.get_date('time_released')
-
-  date_released = property(get_date_released)
+  date_released = property(lambda self: self.get_date('time_released'))
+  playcount = property(lambda self: self.get('playcount'))
+  bookmark_time = property(lambda self: self.get('bookmark_time'))
+  tracklen_time = property(lambda self: self.get('tracklen'))
