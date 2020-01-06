@@ -33,10 +33,11 @@ does not signal to the iPod that it is safe to disconnect, so the message
 ubinding requires sudoer's rights, so we'll need a system service to do the heavy
 lifting.
 
-Also, it appears that even when libgpod does not add or remove data, the database
-saved back to the iPod is notably smaller than the one that existed immediately
-prior to libgpod intervention. Will need to investigate and determine if this
-represents data loss or merely greater efficiency.
+Also:
+ * Refactor dump in preparation for pushing to CouchDB
+ * Dump needs also to capture and push \_Itdb_Artwork objects
+ * transferLibrary ought to mark tracks no longer in iTunes as deleted
+ * scanUntrackedFiles should ignore "deleted" files
 
 # Status
 

@@ -11,6 +11,9 @@ class Database:
     self.db = gpod.Database(path, None)
     self.path = path
 
+  def as_libgpod(self):
+    return self.db
+
   def __iter__(self):
     self.n = 0
     return self
@@ -32,9 +35,11 @@ class Database:
     self.db.copy_delayed_files()
     self.db.close()
 
+    # Can't do this. It's artificially incrementing play count each time through.
+    
     # Temporary fix until we're ready to commit this data to a database
-    playcounts = os.path.join(self.path, IPOD_CTRL, 'iTunes', 'Play Counts')
-    os.rename("%s.bak" % playcounts, playcounts)
+#    playcounts = os.path.join(self.path, IPOD_CTRL, 'iTunes', 'Play Counts')
+#    os.rename("%s.bak" % playcounts, playcounts)
 
 #    os.system("umount \"%s\"" % self.path)
 
