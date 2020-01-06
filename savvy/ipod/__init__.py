@@ -1,4 +1,5 @@
 import savvy.ipod.database
+def CTRL(): return getattr(savvy.ipod.database, 'IPOD_CTRL')
 
 import scandir
 import os
@@ -9,8 +10,6 @@ def load(path):
   return savvy.ipod.database.Database(path)
 
 def ball(path, dest = None):
-  IPOD_CTRL = getattr(savvy.ipod.database, 'IPOD_CTRL')
-
   if not dest: dest = path
 
   now = datetime.datetime.now().isoformat()
@@ -18,16 +17,14 @@ def ball(path, dest = None):
   output = os.path.join(dest, output)
 
   with tarfile.open(output, "w:gz") as tar:
-    folder = os.path.join(path, IPOD_CTRL, 'Device')
+    folder = os.path.join(path, CTRL(), 'Device')
     tar.add(folder, arcname='Device')
-    folder = os.path.join(path, IPOD_CTRL, 'iTunes')
+    folder = os.path.join(path, CTRL(), 'iTunes')
     tar.add(folder, arcname='iTunes')
 
 def find(dir, depth=1):
-  IPOD_CTRL = getattr(savvy.ipod.database, 'IPOD_CTRL')
-
-  for i in Seek("/media", depth=depth+2):
-    if i.path.endswith(IPOD_CTRL):
+  for i in Seek(dir, depth=depth+2):
+    if i.path.endswith(CTRL()):
       return os.path.dirname(i.path)
 
 class Seek:

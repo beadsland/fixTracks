@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import savvy
-db = savvy.init().as_libgpod()
+db = savvy.init("/media", "/media/removable/microSD/back")
 
 
 
