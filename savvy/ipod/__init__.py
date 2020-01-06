@@ -13,7 +13,7 @@ def ball(path, dest = None):
 
   if not dest: dest = path
 
-  now = datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
+  now = datetime.datetime.now().isoformat()
   output = "%s_%s.tgz" % (os.path.basename(path), now)
   output = os.path.join(dest, output)
 
