@@ -1,3 +1,16 @@
+def repr_array(arr, plus=None):
+  if not len(arr):
+    out = "[]"
+  elif len(arr) < 4:
+    out = str(arr[:3])
+  else:
+    out = "%s, ... of %d]" % (str(arr[:3]).rstrip("]"), len(arr))
+
+  if plus:
+    return "%s + %s" % (out, plus)
+  else:
+    return out
+
 class Collate:
   def __init__(self, piles):
     holds = {}
@@ -24,8 +37,7 @@ class Collate:
     return next(self.stagger)
 
   def __repr__(self):
-    my_class = self.__class__
-    return "<%s.%s: %s>" % (my_class.__module__, my_class.__name__, self.stagger)
+    return "<%s: %s>" % (self.__class__.__name__, repr(self.stagger))
 
 class Stagger:
   def __init__(self, denom, prop, feed, hold=None):
@@ -51,9 +63,8 @@ class Stagger:
         raise StopIteration
 
   def __repr__(self):
-    my_class = self.__class__
-    return "<%s.%s: %s + %s>" % (my_class.__module__, my_class.__name__,
-                                 self.sort_held(), self.feed)
+    heldstr = repr_array(self.sort_held(), self.feed)
+    return "<%s: %s>" % (self.__class__.__name__, heldstr)
 
   # We want at least denom sources held before we release any.
   def next_uniq(self):
@@ -100,14 +111,14 @@ class Stagger:
 
   # By default, sort and return everything
   def sort_held(self, onzero = False):
-    choices = [(self.held[key].timeout, key) for key in self.held]
+    choices = [(self.held[key].timeout, key, self.held[key]) for key in self.held]
     if onzero:
-      choices = [(t, k) for (t, k) in choices if t <= 0]
-    return sorted(choices, key=lambda held: held[0])
+      choices = [(tout, k, s) for (tout, k, s) in choices if tout <= 0]
+    return sorted(choices, key=lambda held: held[0].value)
 
 class Held:
   def __init__(self, iter=None, timeout=0):
-    self.timeout = timeout
+    self.timeout = Delta(timeout)
     self.iter = iter
     self.queue = []
 
@@ -122,13 +133,39 @@ class Held:
     else:
       raise StopIteration
 
+  def __repr__(self):
+    if self.iter:
+      return "<%s: %s>" % (self.__class__.__name__, repr(self.iter))
+    else:
+      return "<%s: %s>" % (self.__class__.__name__, repr_array(self.queue))
+
   def append(self, track):
     if self.iter:
       raise UserWarning("can't append to Held wrapping an iterable")
     self.queue.append(track)
 
   def defer(self, ms):
-    self.timeout = ms
+    self.timeout = Delta(ms)
 
   def advance(self, ms):
-    self.timeout = self.timeout - ms
+    self.timeout.advance(ms)
+
+import datetime
+DELTA_ZERO = datetime.timedelta(days = 0)
+
+class Delta:
+  def __init__(self, ms=0):
+    if type(ms) is self.__class__:
+      ms = ms.value
+    self._value = datetime.timedelta(milliseconds = ms)
+
+  def __repr__(self):
+    if self.value > DELTA_ZERO:
+      return str(self._value).strip('[0:]')
+    else:
+      return "-%s" % str(DELTA_ZERO - self.value).strip('[0:]')
+
+  def advance(self, ms):
+    self._value = self._value - datetime.timedelta(milliseconds = ms)
+
+  value = property(lambda self: self._value)

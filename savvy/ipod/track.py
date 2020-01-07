@@ -9,8 +9,8 @@ class Track:
 
   def __repr__(self):
     my_class = self.__class__
-    return "<%s.%s: %s [%s]>" % (my_class.__module__, my_class.__name__,
-                            self.get('title'), self.get('album'))
+    return "<%s %s: %s [%s]>" % ("iPod", my_class.__name__,
+                                 self.get('title'), self.get('album'))
 
   as_libgpod = property(lambda self: self.track)
 
