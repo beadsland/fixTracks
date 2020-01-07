@@ -1,3 +1,32 @@
+class Collate:
+  def __init__(self, piles):
+    holds = {}
+    defer = 0
+
+    while len(piles):
+      (name, share, iter) = piles.pop(0)
+
+      defer = defer + 1
+      id = "%s %d" % (name, share)
+      holds[id] = Held(iter)
+      holds[id].defer(defer)
+
+      share = share - 1
+      if share:
+        piles.append((name, share, iter))
+
+    self.stagger = Stagger(len(holds), None, None, holds)
+
+  def __iter__(self):
+    return self
+
+  def next(self):
+    return next(self.stagger)
+
+  def __repr__(self):
+    my_class = self.__class__
+    return "<%s.%s: %s>" % (my_class.__module__, my_class.__name__, self.stagger)
+
 class Stagger:
   def __init__(self, denom, prop, feed, hold=None):
     self.denom = denom
@@ -77,20 +106,25 @@ class Stagger:
     return sorted(choices, key=lambda held: held[0])
 
 class Held:
-  def __init__(self):
+  def __init__(self, iter = None):
     self.timeout = 0
+    self.iter = iter
     self.queue = []
 
   def __iter__(self):
     return self
 
   def next(self):
-    if len(self.queue):
+    if self.iter:
+      return next(self.iter)
+    elif len(self.queue):
       return self.queue.pop(0)
     else:
       raise StopIteration
 
   def append(self, track):
+    if self.iter:
+      raise UserWarning("can't append to Held wrapping an iterable")
     self.queue.append(track)
 
   def defer(self, ms):
