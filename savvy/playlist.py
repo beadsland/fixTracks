@@ -1,3 +1,5 @@
+import re
+
 def repr_array(arr, plus=None):
   if not len(arr):
     out = "[]"
@@ -37,7 +39,9 @@ class Collate:
     return next(self.stagger)
 
   def __repr__(self):
-    return "<%s: %s>" % (self.__class__.__name__, repr(self.stagger))
+    patt = re.compile("^<%s: (.*)>$" % self.stagger.__class__.__name__)
+    m = re.match(patt, repr(self.stagger))
+    return "<%s: %s>" % (self.__class__.__name__, m.groups()[0])
 
 class Stagger:
   def __init__(self, denom, prop, feed, hold=None):
@@ -94,7 +98,7 @@ class Stagger:
       key = choices[0][1]
       return self._emit(key)
     else:
-      return self.next()
+      return self.next_uniq()
 
   def _emit(self, key):
     try:
@@ -113,12 +117,15 @@ class Stagger:
   def sort_held(self, onzero = False):
     choices = [(self.held[key].timeout, key, self.held[key]) for key in self.held]
     if onzero:
-      choices = [(tout, k, s) for (tout, k, s) in choices if tout <= 0]
+      choices = [(tout, k, s) for (tout, k, s) in choices if tout.less_than_zero]
     return sorted(choices, key=lambda held: held[0].value)
 
 class Held:
   def __init__(self, iter=None, timeout=0):
-    self.timeout = Delta(timeout)
+    if isinstance(timeout, Delta):
+      self.timeout = timeout
+    else:
+      self.timeout = Delta(timeout)
     self.iter = iter
     self.queue = []
 
@@ -155,8 +162,6 @@ DELTA_ZERO = datetime.timedelta(days = 0)
 
 class Delta:
   def __init__(self, ms=0):
-    if type(ms) is self.__class__:
-      ms = ms.value
     self._value = datetime.timedelta(milliseconds = ms)
 
   def __repr__(self):
@@ -169,3 +174,4 @@ class Delta:
     self._value = self._value - datetime.timedelta(milliseconds = ms)
 
   value = property(lambda self: self._value)
+  less_than_zero = property(lambda self: self.value < DELTA_ZERO)

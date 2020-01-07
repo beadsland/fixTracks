@@ -22,24 +22,25 @@ def savvy_roster(db, name, cap=24, history=None):
   # Doesn't yet differentiate front of list from back thereof
   hold = {}
   from savvy.ipod.track import Track
-  from savvy.playlist import Held
+  from savvy.playlist import Held, Delta
   if history:
     hold = [Track(t) for t in history]
     hold = [(t.podcast_title, t.maxplaytime) for t in hold]
     hold = reduce(countholds, hold, {})
-#    hold = {k: Held(k, timeout=v) for (k,v) in hold}
-  print(hold)
+    hold = {k: Delta(hold[k]) for k in hold}
+    hold1 = {k: Held(timeout=hold[k]) for k in hold}
+    hold2 = {k: Held(timeout=hold[k]) for k in hold}
 
   import savvy.playlist
-  list1 = savvy.playlist.Stagger(10, 'podcast_title', reversed(tracks))
+  list1 = savvy.playlist.Stagger(10, 'podcast_title', reversed(tracks), hold=hold1)
+  list2 = savvy.playlist.Stagger(10, 'podcast_title', iter(tracks), hold=hold2)
   collate = savvy.playlist.Collate([("current", 2, list1),
-  list2 = savvy.playlist.Stagger(10, 'podcast_title', iter(tracks))
                                     ("history", 1, list2)])
 
   while collate and far < cap:
-    print ""
-    print collate
+    print "\n%s" % collate
     t = next(collate)
+    print "\n%s" % t
     plist.add(t.as_libgpod)
     far = far + datetime.timedelta(milliseconds = t.playtime)
 
@@ -61,11 +62,12 @@ def savvy_history(db, name, cap=24):
 
   print "\n%s: %d tracks" % (name, len(plist))
 
+
 db = savvy.init("/media", "/media/removable/microSD/back")
 
-print "Updating savvy history..."
+print "\nUpdating savvy history..."
 savvy_history(db, "Savvy History")
-print "Updating savvy roster..."
+print "\nUpdating savvy roster..."
 savvy_roster(db, "Savvy Playlist", history=db.get_playlist("Savvy History"))
 
 print ""
