@@ -26,7 +26,12 @@ class Track:
       else:
         return None
 
-  date_released = property(lambda self: self.get_date('time_released'))
+  release_date = property(lambda self: self.get_date('time_released'))
   playcount = property(lambda self: self.get('playcount'))
   bookmark_time = property(lambda self: self.get('bookmark_time'))
   tracklen_time = property(lambda self: self.get('tracklen'))
+  playtime = property(lambda self: self.tracklen_time - self.bookmark_time)
+
+  # need a method that checks for podcast alias album names
+  album_title = property(lambda self: self.get('album'))
+  podcast_title = property(lambda self: self.album_title)
