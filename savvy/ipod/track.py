@@ -36,6 +36,12 @@ class Track:
     else:
       return played
 
+  def get_max_playtime(self):
+    if self.playcount:
+      return self.tracklen_time
+    else:
+      return self.bookmark_time
+
   release_date = property(lambda self: self.get_date('time_released'))
   played_date = property(lambda self: self.get_date('time_played'))
 
@@ -46,6 +52,7 @@ class Track:
                                  or self.get_date('time_played', False))
   playcount = property(lambda self: self.get('playcount'))
   playtime = property(lambda self: self.tracklen_time - self.bookmark_time)
+  maxplaytime = property(lambda self: self.get_max_playtime())
 
   # need a method that checks for podcast alias album names
   album_title = property(lambda self: self.get('album'))

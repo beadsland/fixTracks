@@ -106,8 +106,8 @@ class Stagger:
     return sorted(choices, key=lambda held: held[0])
 
 class Held:
-  def __init__(self, iter = None):
-    self.timeout = 0
+  def __init__(self, iter=None, timeout=0):
+    self.timeout = timeout
     self.iter = iter
     self.queue = []
 
