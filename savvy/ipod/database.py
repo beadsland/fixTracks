@@ -13,8 +13,7 @@ class Database:
     self.db = gpod.Database(path, None)
     self.path = path
 
-  def as_libgpod(self):
-    return self.db
+  as_libgpod = property(lambda self: self.db)
 
   def __iter__(self):
     self.n = 0
