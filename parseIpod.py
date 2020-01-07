@@ -20,6 +20,9 @@ def savvy_roster(db, name, cap=24, history=None):
 
   # Database.get_playlist() should return a savvy object, not a libgpod object
   # Doesn't yet differentiate front of list from back thereof
+  current_piles = 2
+  history_piles = 1
+
   hold = {}
   from savvy.ipod.track import Track
   from savvy.playlist import Held, Delta
@@ -27,15 +30,15 @@ def savvy_roster(db, name, cap=24, history=None):
     hold = [Track(t) for t in history]
     hold = [(t.podcast_title, t.maxplaytime) for t in hold]
     hold = reduce(countholds, hold, {})
-    hold = {k: Delta(hold[k]) for k in hold}
+    hold = {k: Delta(hold[k] * (current_piles + history_piles)) for k in hold}
     hold1 = {k: Held(timeout=hold[k]) for k in hold}
     hold2 = {k: Held(timeout=hold[k]) for k in hold}
 
   import savvy.playlist
   list1 = savvy.playlist.Stagger(10, 'podcast_title', reversed(tracks), hold=hold1)
   list2 = savvy.playlist.Stagger(10, 'podcast_title', iter(tracks), hold=hold2)
-  collate = savvy.playlist.Collate([("current", 2, list1),
-                                    ("history", 1, list2)])
+  collate = savvy.playlist.Collate([("current", current_piles, list1),
+                                    ("history", history_piles, list2)])
 
   while collate and far < cap:
     print "\n%s" % collate
