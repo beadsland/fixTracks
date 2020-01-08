@@ -1,12 +1,17 @@
-def repr_array(arr, plus=None):
-  if not len(arr):
-    out = "[]"
-  elif len(arr) < 4:
-    out = str(arr[:3])
-  else:
-    out = "%s, ... of %d]" % (str(arr[:3]).rstrip("]"), len(arr))
+class ReprArray:
+  def __init__(self, arr, max=3):
+    if len(arr) > max:
+      str = "+:%d" % (len(arr) - max)
+      arr = arr[:max]
+      arr.append(ReprLiteral(str))
+    self.arr = arr
 
-  if plus:
-    return "%s + %s" % (out, plus)
-  else:
-    return out
+  def __repr__(self):
+    return repr(self.arr)
+
+class ReprLiteral:
+  def __init__(self, str):
+    self.str = str
+
+  def __repr__(self):
+    return self.str

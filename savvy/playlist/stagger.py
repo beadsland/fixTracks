@@ -1,6 +1,15 @@
 import savvy.playlist
 import savvy.playlist.held
 
+def split_zero(fin, tup):
+  (belowzero, abovezero) = fin
+  (defer, prop, hold) = tup
+  if defer.less_than_zero:
+    belowzero.append(tup)
+  else:
+    abovezero.append(tup)
+  return (belowzero, abovezero)
+
 class Stagger:
   def __init__(self, denom, prop, feed, hold=None):
     self.denom = denom
@@ -25,9 +34,25 @@ class Stagger:
         raise StopIteration
 
   def __repr__(self):
-    heldstr = savvy.playlist.repr_array(savvy.playlist.held.sort_held(self.held),
-                                        self.feed)
-    return "<%s: %s>" % (self.__class__.__name__, heldstr)
+    arr = savvy.playlist.held.sort_held(self.held)
+    plusiter = self.feed
+
+    (belowzero, abovezero) = reduce(split_zero, arr, ([], []))
+
+    forelen = 3 - len(belowzero)
+    if plusiter: forelen = forelen - 1
+
+    if len(belowzero):
+      belowzero = savvy.playlist.ReprArray(belowzero, 3)
+    if len(abovezero):
+      abovezero = savvy.playlist.ReprArray(abovezero, max(0, forelen))
+
+    arr = [belowzero, abovezero]
+    if plusiter: arr.insert(1, plusiter)
+
+    arr = [repr(item) for item in arr if item]
+
+    return "<%s: %s>" % (self.__class__.__name__, ' + '.join(arr))
 
   # We want at least denom sources held before we release any.
   def next_uniq(self):
