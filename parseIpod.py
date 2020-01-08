@@ -25,7 +25,7 @@ def savvy_roster(db, name, cap=24, history=None):
 
   hold = {}
   from savvy.ipod.track import Track
-  from savvy.playlist import Held, Delta
+  from savvy.playlist.held import Held, Delta
   if history:
     hold = [Track(t) for t in history]
     hold = [(t.podcast_title, t.maxplaytime) for t in hold]
@@ -34,11 +34,14 @@ def savvy_roster(db, name, cap=24, history=None):
     hold1 = {k: Held(timeout=hold[k]) for k in hold}
     hold2 = {k: Held(timeout=hold[k]) for k in hold}
 
-  import savvy.playlist
-  list1 = savvy.playlist.Stagger(10, 'podcast_title', reversed(tracks), hold=hold1)
-  list2 = savvy.playlist.Stagger(10, 'podcast_title', iter(tracks), hold=hold2)
-  collate = savvy.playlist.Collate([("current", current_piles, list1),
-                                    ("history", history_piles, list2)])
+  import savvy.playlist.stagger
+  import savvy.playlist.collate
+  list1 = savvy.playlist.stagger.Stagger(10, 'podcast_title', reversed(tracks),
+                                                              hold=hold1)
+  list2 = savvy.playlist.stagger.Stagger(10, 'podcast_title', iter(tracks),
+                                                              hold=hold2)
+  collate = savvy.playlist.collate.Collate([("current", current_piles, list1),
+                                            ("history", history_piles, list2)])
 
   while collate and far < cap:
     print "\n%s" % collate
