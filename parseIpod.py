@@ -43,11 +43,17 @@ def savvy_roster(db, name, cap=24, history=None):
   collate = savvy.playlist.collate.Collate([("current", current_piles, list1),
                                             ("history", history_piles, list2)])
 
+  needle = False
   while collate and far < cap:
     print "\n%s" % collate
     t = next(collate)
     print "\n%s" % t
-    plist.add(t.as_libgpod)
+
+    if t.bookmark_time and not needle:
+      plist.add(t.as_libgpod, 0)
+      needle = True
+    else:
+      plist.add(t.as_libgpod)
     far = far + datetime.timedelta(milliseconds = t.playtime)
 
   print "\n%s: %d tracks" % (name, len(plist))
