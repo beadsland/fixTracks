@@ -8,6 +8,8 @@ def sort_held(held, onzero = False):
     choices = [(tout, k, s) for (tout, k, s) in choices if tout.less_than_zero]
   return sorted(choices, key=lambda held: held[0].value)
 
+class AppendToIteratorError(Exception): pass
+
 class Held:
   def __init__(self, iter=None, timeout=0):
     if isinstance(timeout, savvy.common.Delta):
@@ -37,7 +39,7 @@ class Held:
 
   def append(self, track):
     if self.iter:
-      raise UserWarning("can't append to Held wrapping an iterable")
+      raise AppendToIteratorError()
     self.queue.append(track)
 
   def defer(self, ms):
