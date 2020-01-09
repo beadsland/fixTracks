@@ -1,6 +1,6 @@
 import datetime
 
-IPOD_NULL = datetime.datetime(1970, 1, 1, 0, 0, 0)
+IPOD_NULL = datetime.datetime(1970, 1, 1, 14, 0, 0)
 
 class Track:
   def __init__(self, track):
