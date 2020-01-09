@@ -33,6 +33,8 @@ class Held:
   def __repr__(self):
     if self.iter:
       return repr(self.iter)
+    elif not self.queue:
+      return "None"
     else:
       return "<%s: %s>" % (self.__class__.__name__,
                            savvy.playlist.ReprArray(self.queue))
