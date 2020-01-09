@@ -24,12 +24,12 @@ class Stagger:
   def next(self):
     if self.feed:
       if len(self.held) < self.denom:
-        return self.next_uniq()
+        return self._next_uniq()
       else:
-        return self.next_free()
+        return self._next_free()
     else:
       if len(self.held):
-        return self.next_free(False)
+        return self._next_free(False)
       else:
         raise StopIteration
 
@@ -57,7 +57,7 @@ class Stagger:
     return "<%s: %s>" % (self.__class__.__name__, ' + '.join(arr))
 
   # We want at least denom sources held before we release any.
-  def next_uniq(self):
+  def _next_uniq(self):
     try:
       track = next(self.feed)
     except:
@@ -77,14 +77,14 @@ class Stagger:
     self.held[key].append(track)
 
   # Release furthest advanced track with deferral < 0, until we can't.
-  def next_free(self, onzero = True):
+  def _next_free(self, onzero = True):
     choices = savvy.playlist.held.sort_held(self.held, onzero)
 
     if len(choices):
       key = choices[0][1]
       return self._emit(key)
     else:
-      return self.next_uniq()
+      return self._next_uniq()
 
   def _emit(self, key):
     try:
