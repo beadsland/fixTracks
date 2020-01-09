@@ -11,7 +11,7 @@ def savvy_roster(db, name, cap=24, history=None):
   far = datetime.timedelta(hours=0)
 
   tracks = [t for t in db if not t.playcount]
-  tracks = sorted(tracks, key = lambda track: track.release_date)
+  tracks = sorted(tracks, key = lambda track: track.release_date_sortable)
 
   current_piles = 2
   history_piles = 1
@@ -79,7 +79,7 @@ def savvy_history(db, name, cap=24):
   far = datetime.timedelta(hours=0)
 
   tracks = [t for t in db if t.playcount]
-  tracks = sorted(tracks, key = lambda track: track.get_mock_played_date(),
+  tracks = sorted(tracks, key = lambda track: track.played_date,
                           reverse = True)
 
   while tracks and far < cap:

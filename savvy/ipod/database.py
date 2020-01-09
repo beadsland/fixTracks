@@ -4,14 +4,34 @@ import os
 import usb.core
 import tempfile
 import pathlib
+import datetime
 
 IPOD_CTRL = "iPod_Control"
+IPOD_BORN = datetime.datetime(2001, 10, 23, 0, 0, 0)
 
 class Database:
   def __init__(self, path):
     import gpod
     self.db = gpod.Database(path, None)
     self.path = path
+
+  def normalize_bad_clocktime(self):
+    now = datetime.datetime.now()
+    tracks = [savvy.ipod.track.Track(t) for t in self.db]
+    bad = [t for t in tracks if t.played_date and t.played_date < IPOD_BORN]
+
+    if bad:
+      bad = sorted(bad, key = lambda t: t.played_date)
+      maxbad = max(t.played_date for t in bad)
+
+      floor = datetime.datetime(1999, 12, 31, 0, 0, 0)
+      pocket = datetime.timedelta(hours = 12)
+      fix = maxbad - floor + pocket
+
+      for t in bad:
+        fixtime = now - fix + (t.played_date - floor)
+        print "* Adjusting %s to %s for %s" % (t.played_date, fixtime, t)
+        t.as_libgpod['time_played'] = fixtime
 
   as_libgpod = property(lambda self: self.db)
 

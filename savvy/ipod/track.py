@@ -1,7 +1,6 @@
 import datetime
 
-IPOD_NULL = datetime.datetime(1969, 12, 31, 19, 0, 0)
-MOCK_CEIL = datetime.datetime(2001, 1, 1, 0, 0, 0)
+IPOD_NULL = datetime.datetime(1970, 1, 1, 0, 0, 0)
 
 class Track:
   def __init__(self, track):
@@ -17,9 +16,9 @@ class Track:
   def get(self, key):
     return self.track[key]
 
-  def get_date(self, key, min=True):
+  def get_date(self, key, min=False):
     try:
-      if self.get(key) == IPOD_NULL:
+      if self.get(key) <= IPOD_NULL:
         return None
       else:
         return self.get(key)
@@ -29,15 +28,8 @@ class Track:
       else:
         return None
 
-  def get_mock_played_date(self):
-    played = self.played_date
-    if played < MOCK_CEIL:
-      return datetime.datetime.now() - (MOCK_CEIL - played)
-    else:
-      return played
-
-
   release_date = property(lambda self: self.get_date('time_released'))
+  release_date_sortable = property(lambda s: s.get_date('time_released', True))
   played_date = property(lambda self: self.get_date('time_played'))
 
   bookmark_time = property(lambda self: self.get('bookmark_time'))

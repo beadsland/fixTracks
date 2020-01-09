@@ -10,4 +10,9 @@ def init(mntdir, backdir):
   savvy.ipod.ball(path, backdir)
 
   print "Loading ipod database..."
-  return savvy.ipod.load(path)
+  db = savvy.ipod.load(path)
+
+  print "Normalizing clock reset datetimes..."
+  db.normalize_bad_clocktime()
+
+  return db
