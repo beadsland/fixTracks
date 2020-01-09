@@ -65,10 +65,10 @@ def savvy_roster(db, name, cap=24, history=None):
     print "\n%s" % t
 
     if t.bookmark_time and not needle:
-      plist.add(t.as_libgpod, 0)
+      plist.add(t, 0)
       needle = True
     else:
-      plist.add(t.as_libgpod)
+      plist.add(t)
     far = far + datetime.timedelta(milliseconds = t.playtime)
 
   print "\n%s: %d tracks" % (name, len(plist))
@@ -84,7 +84,7 @@ def savvy_history(db, name, cap=24):
 
   while tracks and far < cap:
     t = tracks.pop(0)
-    plist.add(t.as_libgpod)
+    plist.add(t)
     far = far + datetime.timedelta(milliseconds = t.tracklen_time)
 
   print "\n%s: %d tracks" % (name, len(plist))

@@ -1,4 +1,5 @@
 import savvy.ipod.track
+import savvy.ipod.playlist
 
 import os
 import usb.core
@@ -61,21 +62,23 @@ class Database:
     pathlib.Path(sema).touch()
 
   def playlists(self):
-    return {p.name: p for p in self.db.get_playlists()}
+    return {p.name: savvy.ipod.playlist.Playlist(p)
+            for p in self.db.get_playlists()}
 
   def get_playlist(self, name):
     return self.playlists()[name]
 
   def add_playlist(self, name):
-    return self.db.new_Playlist(title=name) # weird case in case weird
+    plist = self.db.new_Playlist(title=name) # weird case in case weird
+    return savvy.ipod.playlist.Playlist(plist)
 
   def wipe_playlist(self, name):
     if name not in self.playlists():
       self.add_playlist(name)
 
-    plist = self.get_playlist(name)
+    plist = self.get_playlist(name).as_libgpod
 
     for track in reversed(plist):
       plist.remove(track)
 
-    return plist
+    return savvy.ipod.playlist.Playlist(plist)
