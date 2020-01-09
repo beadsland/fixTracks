@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import savvy
+import savvy.common
 
 import datetime
 import sys
@@ -102,5 +103,8 @@ for p in reversed(list(db.get_playlist("Savvy History"))[:5]):
   print p
 sys.stdout.write("--> ")
 for p in list(db.get_playlist("Savvy Playlist"))[:6]:
-  print p
+  if p.bookmark_time:
+    print "%s [%s]" % (p, savvy.common.Delta(p.bookmark_time))
+  else:
+    print p
 print ""
