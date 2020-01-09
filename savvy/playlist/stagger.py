@@ -35,20 +35,22 @@ class Stagger:
 
   def __repr__(self):
     arr = savvy.playlist.held.sort_held(self.held)
-    plusiter = self.feed
 
     (belowzero, abovezero) = reduce(split_zero, arr, ([], []))
 
-    forelen = 3 - len(belowzero)
-    if plusiter: forelen = forelen - 1
+    forelen = min(3, len(belowzero))
+    backlen = min(3, max(3, len(abovezero) - forelen))
+    if self.feed is not None:
+      if forelen > 0: forelen -=1
+      else: backlen -= 1
 
     if len(belowzero):
-      belowzero = savvy.playlist.ReprArray(belowzero, 3)
+      belowzero = savvy.playlist.ReprArray(belowzero, forelen)
     if len(abovezero):
-      abovezero = savvy.playlist.ReprArray(abovezero, max(0, forelen))
+      abovezero = savvy.playlist.ReprArray(abovezero, max(0, backlen))
 
     arr = [belowzero, abovezero]
-    if plusiter: arr.insert(1, plusiter)
+    if self.feed: arr.insert(1, self.feed)
 
     arr = [repr(item) for item in arr if item]
 
