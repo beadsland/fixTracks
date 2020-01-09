@@ -1,4 +1,3 @@
-import savvy.playlist
 import savvy.common
 
 # By default, sort and return everything
@@ -37,7 +36,7 @@ class Held:
       return "None"
     else:
       return "<%s: %s>" % (self.__class__.__name__,
-                           savvy.playlist.ReprArray(self.queue))
+                           savvy.common.ReprArray(self.queue))
 
   def append(self, track):
     if self.iter:

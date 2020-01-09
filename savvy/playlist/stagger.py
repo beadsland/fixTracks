@@ -1,4 +1,4 @@
-import savvy.playlist
+import savvy.common
 import savvy.playlist.held
 
 def split_zero(fin, tup):
@@ -45,9 +45,9 @@ class Stagger:
       else: backlen -= 1
 
     if len(belowzero):
-      belowzero = savvy.playlist.ReprArray(belowzero, forelen)
+      belowzero = savvy.common.ReprArray(belowzero, forelen)
     if len(abovezero):
-      abovezero = savvy.playlist.ReprArray(abovezero, max(0, backlen))
+      abovezero = savvy.common.ReprArray(abovezero, max(0, backlen))
 
     arr = [belowzero, abovezero]
     if self.feed: arr.insert(1, self.feed)
