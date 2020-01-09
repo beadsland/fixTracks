@@ -17,7 +17,7 @@ for id in db:
   n = n + 1
   pref = db[id]['iTunes']['iTunes Library']['Music Folder']
   path = db[id]['iTunes']['Location'].replace(pref, "")
-  sys.stdout.write("> %d: %s: %s     \r" % (n, id, path[:100]))
+  sys.stdout.write("> %d: %s: %s          \r" % (n, id, path[:100]))
 
   if re.search(find, path, re.IGNORECASE):
     print("\n%s" % path)
