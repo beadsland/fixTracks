@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Copyright 2020 Beads Land-Trujillo
+
 # This should be an upstart script--without shared modules--but we're running
 # under a chroot, so we'll just launch it from here and benefit from code
 # reuse. Ultimately this would be a privileged node in a distributed Elixir

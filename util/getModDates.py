@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Copyright 2019 Beads Land-Trujillo
+
+# Reference:
 # https://medium.com/@leojosefm/python-analyzing-itunes-library-97bec60e13cb
 
 import pandas as pd

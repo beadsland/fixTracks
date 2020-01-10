@@ -1,3 +1,5 @@
+# Copyright 2020 Beads Land-Trujillo
+
 import datetime
 
 IPOD_NULL = datetime.datetime(1970, 1, 1, 14, 0, 0)

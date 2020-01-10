@@ -1,3 +1,5 @@
+# Copyright 2020 Beads Land-Trujillo
+
 import re
 import datetime
 DELTA_ZERO = datetime.timedelta(days = 0)

@@ -1,3 +1,5 @@
+# Copyright 2018 Beads Land-Trujillo
+
 import collections
 import datetime
 import threading

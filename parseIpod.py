@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Copyright 2019 Beads Land-Trujillo
+
 import savvy
 import savvy.common
 

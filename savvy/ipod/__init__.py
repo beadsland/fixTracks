@@ -1,3 +1,5 @@
+# Copyright 2020 Beads Land-Trujillo
+
 import savvy.ipod.database
 def CTRL(): return getattr(savvy.ipod.database, 'IPOD_CTRL')
 

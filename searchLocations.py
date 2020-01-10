@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Copyright 2019 Beads Land-Trujillo
+
 import re
 import couchdb
 import sys

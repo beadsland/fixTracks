@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Copyright 2018 Beads Land-Trujillo
+
 import warnings
 warnings.simplefilter("ignore");
 

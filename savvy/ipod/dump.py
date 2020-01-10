@@ -1,3 +1,5 @@
+# Copyright 2020 Beads Land-Trujillo
+
 import savvy
 #db = savvy.init("/media", "/media/removable/microSD/back").as_libgpod()
 

@@ -1,3 +1,5 @@
+# Copyright 2018 Beads Land-Trujillo
+
 import sys
 import datetime
 import heapq as hq

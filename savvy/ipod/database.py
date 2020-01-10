@@ -1,3 +1,5 @@
+# Copyright 2020 Beads Land-Trujillo
+
 import savvy.ipod.track
 import savvy.ipod.playlist
 

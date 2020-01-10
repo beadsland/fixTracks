@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Copyright 2018 Beads Land-Trujillo
+
 sudo mkdir -p /media/ipod
 
 sudo umount /dev/sd*1
@@ -8,4 +10,3 @@ sudo mount /dev/sd?1 /media/ipod || exit 1
 ./dopost 2>&1 | grep -ve 'Unexpected image type in mhni' \
 			-e 'for artwork entry' \
 			-e '^$' | cat
-

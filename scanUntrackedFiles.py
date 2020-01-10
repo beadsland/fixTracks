@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Copyright 2019 Beads Land-Trujillo
+
 import os
 import couchdb
 import sys
@@ -41,7 +43,6 @@ class Folder:
         if result: return os.path.join(self.path, result)
         self.dict.pop(key)
       self._get_push(next(self.iter))
-    raise StopIteration()
 
   def _next_deep(self, key):
     if type(self.dict[key]) is str:

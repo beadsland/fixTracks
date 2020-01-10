@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Copyright 2019 Beads Land-Trujillo
+
 import os
 import re
 import sys

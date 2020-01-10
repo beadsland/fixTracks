@@ -1,5 +1,7 @@
 #!/usr/bin/env python3.6
 
+# Copyright 2018 Beads Land-Trujillo
+
 import lib.flow
 import pyshark
 import threading

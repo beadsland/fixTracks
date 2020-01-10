@@ -1,3 +1,5 @@
+# Copyright 2020 Beads Land-Trujillo
+
 import savvy.playlist.stagger
 import savvy.playlist.held
 

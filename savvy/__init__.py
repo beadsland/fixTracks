@@ -1,3 +1,5 @@
+# Copyright 2020 Beads Land-Trujillo
+
 def init(mntdir, backdir):
   print "Seeking mounted ipod..."
   import savvy.ipod

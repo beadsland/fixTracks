@@ -1,3 +1,5 @@
+# Copyright 2018 Beads Land-Trujillo
+
 def run_sudo():          # https://gist.github.com/davejamesmiller/1965559
 
   # This is how I ensure a Python script is launched as root, and automatically

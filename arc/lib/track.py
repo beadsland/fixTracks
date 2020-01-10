@@ -1,3 +1,5 @@
+# Copyright 2018 Beads Land-Trujillo
+
 def generate(playlist):
   return (Track(t) for t in playlist)
 

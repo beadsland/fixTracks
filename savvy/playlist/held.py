@@ -1,3 +1,5 @@
+# Copyright 2020 Beads Land-Trujillo
+
 import savvy.common
 
 # By default, sort and return everything

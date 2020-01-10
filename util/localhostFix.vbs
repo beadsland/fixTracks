@@ -1,3 +1,5 @@
+'' Copyright 2019 Beads Land-Trujillo
+
 Option Explicit
 
 Wscript.Echo "Setting up objects..."
