@@ -41,6 +41,7 @@ class Folder:
         if result: return os.path.join(self.path, result)
         self.dict.pop(key)
       self._get_push(next(self.iter))
+    raise StopIteration()
 
   def _next_deep(self, key):
     if type(self.dict[key]) is str:
