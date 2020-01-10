@@ -6,17 +6,17 @@ IPOD_NULL = datetime.datetime(1970, 1, 1, 14, 0, 0)
 
 class Track:
   def __init__(self, track):
-    self.track = track
+    self._track = track
 
   def __repr__(self):
     my_class = self.__class__
     return "<%s %s: %s [%s]>" % ("iPod", my_class.__name__,
                                  self.get('title'), self.get('album'))
 
-  as_libgpod = property(lambda self: self.track)
+  as_libgpod = property(lambda self: self._track)
 
   def get(self, key):
-    return self.track[key]
+    return self._track[key]
 
   def get_date(self, key, min=False):
     try:

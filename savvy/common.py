@@ -10,24 +10,24 @@ class ReprArray:
       str = "+:%d" % (len(arr) - max)
       arr = arr[:max]
       arr.append(Literal(str))
-    self.arr = arr
+    self._arr = arr
 
   def __repr__(self):
-    return repr(self.arr)
+    return repr(self._arr)
 
 class Literal:
-  def __init__(self, str): self.str = str
-  def __repr__(self): return self.str
+  def __init__(self, str): self._str = str
+  def __repr__(self): return self._str
 
 class Delta:
   def __init__(self, ms=0):
     self._value = datetime.timedelta(milliseconds = ms)
 
   def __repr__(self):
-    return self._format(self.value < DELTA_ZERO)
+    return self._format(self._value < DELTA_ZERO)
 
   def _format(self, minus=False):
-    delta = str(self.value).strip('[0:]')
+    delta = str(self._value).strip('[0:]')
     if delta and not re.search(':', delta): delta = " ".join([delta, 'ms'])
     if delta and minus: delta = "-%s" % delta
     return delta
@@ -36,4 +36,4 @@ class Delta:
     self._value = self._value - datetime.timedelta(milliseconds = ms)
 
   value = property(lambda self: self._value)
-  less_than_zero = property(lambda self: self.value < DELTA_ZERO)
+  less_than_zero = property(lambda self: self._value < DELTA_ZERO)

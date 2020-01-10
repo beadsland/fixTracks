@@ -22,15 +22,15 @@ class Collate:
       if share:
         piles.append((name, share, iter))
 
-    self.stagger = savvy.playlist.stagger.Stagger(len(holds), None, None, holds)
+    self._stagger = savvy.playlist.stagger.Stagger(len(holds), None, None, holds)
 
   def __iter__(self):
     return self
 
   def next(self):
-    return next(self.stagger)
+    return next(self._stagger)
 
   def __repr__(self):
-    patt = re.compile("^<%s: (.*)>$" % self.stagger.__class__.__name__)
-    m = re.match(patt, repr(self.stagger))
+    patt = re.compile("^<%s: (.*)>$" % self._stagger.__class__.__name__)
+    m = re.match(patt, repr(self._stagger))
     return "<%s: %s>" % (self.__class__.__name__, m.groups()[0])

@@ -14,35 +14,34 @@ def split_zero(fin, tup):
 
 class Stagger:
   def __init__(self, denom, prop, feed, hold=None):
-    self.denom = denom
-    self.prop = prop
-    self.feed = feed
-    self.held = hold
-    if self.held is None: self.held = {}
+    self._denom = denom
+    self._prop = prop
+    self._feed = feed
+    self._held = {} if hold is None else hold
 
   def __iter__(self):
     return self
 
   def next(self):
-    if self.feed:
-      if len(self.held) < self.denom:
+    if self._feed:
+      if len(self._held) < self._denom:
         return self._next_uniq()
       else:
         return self._next_free()
     else:
-      if len(self.held):
+      if len(self._held):
         return self._next_free(False)
       else:
         raise StopIteration
 
   def __repr__(self):
-    arr = savvy.playlist.held.sort_held(self.held)
+    arr = savvy.playlist.held.sort_held(self._held)
 
     (belowzero, abovezero) = reduce(split_zero, arr, ([], []))
 
     forelen = min(3, len(belowzero))
     backlen = min(3, max(3, len(abovezero) - forelen))
-    if self.feed is not None:
+    if self._feed is not None:
       if forelen > 0: forelen -=1
       else: backlen -= 1
 
@@ -52,7 +51,7 @@ class Stagger:
       abovezero = savvy.common.ReprArray(abovezero, max(0, backlen))
 
     arr = [belowzero, abovezero]
-    if self.feed: arr.insert(1, self.feed)
+    if self._feed: arr.insert(1, self._feed)
 
     arr = [repr(item) for item in arr if item]
 
@@ -61,26 +60,26 @@ class Stagger:
   # We want at least denom sources held before we release any.
   def _next_uniq(self):
     try:
-      track = next(self.feed)
+      track = next(self._feed)
     except:
-      self.feed = None
+      self._feed = None
       return self.next()
 
-    for h in self.held:
-      self.held[h].advance(1)
+    for h in self._held:
+      self._held[h].advance(1)
 
     self._defer(track)
     return self.next()
 
   def _defer(self, track):
-    key = getattr(track, self.prop)
-    if key not in self.held:
-      self.held[key] = savvy.playlist.held.Held()
-    self.held[key].append(track)
+    key = getattr(track, self._prop)
+    if key not in self._held:
+      self._held[key] = savvy.playlist.held.Held()
+    self._held[key].append(track)
 
   # Release furthest advanced track with deferral < 0, until we can't.
   def _next_free(self, onzero = True):
-    choices = savvy.playlist.held.sort_held(self.held, onzero)
+    choices = savvy.playlist.held.sort_held(self._held, onzero)
 
     if len(choices):
       key = choices[0][1]
@@ -90,13 +89,13 @@ class Stagger:
 
   def _emit(self, key):
     try:
-      track = next(self.held[key])
+      track = next(self._held[key])
     except StopIteration:
-      del(self.held[key])
+      del(self._held[key])
       return self.next()
 
-    for h in self.held:
+    for h in self._held:
       if h != key:
-        self.held[h].advance(track.playtime)
-    self.held[key].defer(track.playtime)
+        self._held[h].advance(track.playtime)
+    self._held[key].defer(track.playtime)
     return track
