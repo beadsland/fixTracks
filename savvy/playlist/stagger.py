@@ -3,15 +3,6 @@
 import savvy.common
 import savvy.playlist.held
 
-def split_zero(fin, tup):
-  (belowzero, abovezero) = fin
-  (defer, prop, hold) = tup
-  if defer.less_than_zero:
-    belowzero.append(tup)
-  else:
-    abovezero.append(tup)
-  return (belowzero, abovezero)
-
 class Stagger:
   def __init__(self, denom, prop, feed, hold=None):
     self._denom = denom
@@ -35,9 +26,9 @@ class Stagger:
         raise StopIteration
 
   def __repr__(self):
-    arr = savvy.playlist.held.sort_held(self._held)
+    arr = self._sort_held(self._held)
 
-    (belowzero, abovezero) = reduce(split_zero, arr, ([], []))
+    (belowzero, abovezero) = reduce(self._split_zero, arr, ([], []))
 
     forelen = min(3, len(belowzero))
     backlen = min(3, max(3, len(abovezero) - forelen))
@@ -56,6 +47,15 @@ class Stagger:
     arr = [repr(item) for item in arr if item]
 
     return "<%s: %s>" % (self.__class__.__name__, ' + '.join(arr))
+
+  def _split_zero(_self, fin, tup):
+    (belowzero, abovezero) = fin
+    (defer, prop, hold) = tup
+    if defer.less_than_zero:
+      belowzero.append(tup)
+    else:
+      abovezero.append(tup)
+    return (belowzero, abovezero)
 
   # We want at least denom sources held before we release any.
   def _next_uniq(self):
@@ -79,13 +79,20 @@ class Stagger:
 
   # Release furthest advanced track with deferral < 0, until we can't.
   def _next_free(self, onzero = True):
-    choices = savvy.playlist.held.sort_held(self._held, onzero)
+    choices = self._sort_held(self._held, onzero)
 
     if len(choices):
       key = choices[0][1]
       return self._emit(key)
     else:
       return self._next_uniq()
+
+  # By default, sort and return everything
+  def _sort_held(_self, held, onzero = False):
+    choices = [(held[key].timeout, key, held[key]) for key in held]
+    if onzero:
+      choices = [(tout, k, s) for (tout, k, s) in choices if tout.less_than_zero]
+    return sorted(choices, key=lambda held: held[0].value)
 
   def _emit(self, key):
     try:

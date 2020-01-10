@@ -2,13 +2,6 @@
 
 import savvy.common
 
-# By default, sort and return everything
-def sort_held(held, onzero = False):
-  choices = [(held[key].timeout, key, held[key]) for key in held]
-  if onzero:
-    choices = [(tout, k, s) for (tout, k, s) in choices if tout.less_than_zero]
-  return sorted(choices, key=lambda held: held[0].value)
-
 class AppendToIteratorError(Exception): pass
 
 class Held:
