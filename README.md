@@ -24,12 +24,26 @@ Also, need a strategy to avoid name-clashes when returning Playlists as a dict.
 
 _See_ [README: Playlists](doc/README_Playlists.md)
 
-# TODO
+# Project Plan -- Short Term
 
- * transferLibrary ought to mark tracks no longer in iTunes as deleted
- * scanUntrackedFiles should ignore "deleted" files
- * Refactor dump in preparation for pushing to CouchDB
- * Dump needs also to capture and push \_Itdb_Artwork objects
+## Database Repair
+  1. Mark orphan files
+  2. transferLibrary ought to mark tracks no longer in iTunes as deleted
+  3. Implement downloading of podcast feeds
+
+## Playlist Prototype
+  1. Umbrella playlist object with history & needle
+  2. Stagger and Collate as playlist objects
+  3. Dupfinder playlist class fronting a CouchDB View
+  3. Import iPod tracks to CouchDB
+  4. Replication collision detection and recovery
+  5. Normalize iPod played_date by unwinding roster
+  6. Insert non-roster tracks prior to normalization
+  7. Normalized iPod skipped_date by unwinding roster
+
+## libgpod Modernization
+
+This prong of development is on hold for the moment.
 
 # Status
 

@@ -34,10 +34,9 @@ This introduces issues when moving files back. Even without duplication, some
 podcasts issue episodes with strikingly similar titles over the years. When
 iTunes saves an mp3 file, it transliterates non-alphanumeric characters and
 truncates the string to allow for Windows file name restrictions. If another
-file is already present in the given folder with the same name, it chops off a
-few more characters and appends a number. This works fine if the like-named file
-is there to collide with. Not so much if the file has been moved to another
-device to recover disk space.
+file is already present in the given folder with the same name, it appends a
+number. This works fine if the like-named file is there to collide with. Not
+so much if the file has been moved to another device to recover disk space.
 
 As a result, when files were consolidated on the RAID, there were filename
 collisions. When those happen, the duplicates were stored to parallel folder
@@ -64,7 +63,7 @@ builds several nested dict structures from it as lookup tables, and then proceed
 to make a variety of repairs to the database using this information.
 
 This process is now finished, and the scripts involved in the process,
-`getModDates.py` and `localhostFix.vbs` are retained in the util/ directory of
+`getModDates.py` and `localhostFix.vbs` are retained in the `util/` directory of
 this project for archival purposes.
 
 ## 2. Data Transfer
@@ -85,7 +84,7 @@ and filename collisions, it is also surprisingly easy to slip at the keyboard
 while working with tracks in iTunes and inadvertently create duplicates of
 selected tracks.
 
-The ongoing process for fixing this is as follows:
+The process pursued for fixing this was as follows:
 
   1. Export current iTunes Library to XML.
   2. Delete the current copy of the CouchDB database.
@@ -94,7 +93,7 @@ The ongoing process for fixing this is as follows:
   5. Scan the CouchDB database, removing each file name seen from the cache.
   6. Stop on encountering a CouchDB record that can't be found in the cache.
 
-At each stop, we investigate to determine if the issue is a duplicate track, a
+At each stop, I investigated to determine if the issue was a duplicate track, a
 missing file (rare), a case sensitivity failure in the filename, or a case
 insensitivity failure in the podcast folder.
 
@@ -103,29 +102,36 @@ rather, non-Windows systems are stymied by such case insensitivity when trying
 to match filenames created in Windows to those stored in the iTunes database.
 
 If it's just a filename case mismatch, and this isn't the result of duplication
-of case-differing tracks, we rename the file in place. If the podcast folder has
-a filename case mismatch, we duplicate the folder and its contents, and then
+of case-differing tracks, I renamed the file in place. If the podcast folder
+had a filename case mismatch, I duplicate the folder and its contents, and then
 name the alternate folder with alternative case. (Copied files that don't match
-up by podcast folder case will be marked as orphaned, per below.)
+up by podcast folder case are to be marked as orphaned, per below.)
 
-If all that is required is renaming a file or copying a folder, we return to
+If all that was required is renaming a file or copying a folder, I returned to
 Step 3, above.
 
-Otherwise, we make necessary changes in iTunes. If a track is
-duplicated in iTunes, we delete the duplicate. If it is a filename duplication
-resulting from manual sharding (and not already fixed by the VBscript, above),
-we relink the track to the appropriate file in its parallel folder. If the
-underlying file is simply missing, we delete the track that references it.
+Otherwise, I made necessary changes in iTunes. If a track is duplicated in
+iTunes, I deleted the duplicate. If it is a filename duplication resulting from
+manual sharding (and not already fixed by the VBscript, above), I relinked the
+track to the appropriate file in its parallel folder. If the underlying file
+is simply missing, I deleted the track that references it.
 
 We then return to Step 1 above and repeat.
 
+The scripts used for this step were `transferLibrary.py` and
+`scanUntrackedFiles.py`. Another script, `searchLocations.py` was used to
+determine the nature of duplication or case sensitivity failures. It is no
+longer required and has been moved to to `util\` folder for future reference.
+
 ## 4. Orphan Files
 
-Any files that cannot be tied back to a track in the database at the end of this
-process will be added to the CouchDB database as an orphaned track record.
-Orphaned tracks will be prioritized, by age, for subsequent archival and weeding
-by the new media management system, ahead of all tracks on the tail of the
-master playlist.
+Any files that cannot be tied back to a track in the database at the end of
+this process will be added to the CouchDB database as an orphaned track record.
+
+Orphaned tracks will subsequently be prioritized, by age (and thus likelihood
+or recovery in the future in the event of future mistaken deletion), for
+subsequent archival and weeding by the new media management system, ahead of
+all tracks on the tail of the master playlist.
 
 ## 5. Feed Downloads
 
