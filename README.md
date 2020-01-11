@@ -35,7 +35,7 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## Playlist Prototype
 
 ### Experimental & Further Repair
-  0. Refactor messy sync prototype out of main
+  0. Remove old playlists from iPod
   1. Confirm updates don't change revision is no actual changes
   2. Determine elegant solution for storing python-language Views to CouchDB
   3. Meta field in Podcast Feed documents for synonymous album tracks
