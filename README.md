@@ -29,17 +29,31 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## Database Repair
   1. Mark orphan files
   2. transferLibrary ought to mark tracks no longer in iTunes as deleted
-  3. Implement downloading of podcast feeds
+  3. Set up transferLibrary to run periodically (to capture downloads)
+  4. [Save for Later] Implement downloading of podcast feeds
 
 ## Playlist Prototype
-  1. Umbrella playlist object with history & needle
+
+### Experimental & Further Repair
+  0. Refactor messy sync prototype out of main
+  1. Confirm updates don't change revision is no actual changes
+  2. Determine elegant solution for storing python-language Views to CouchDB
+  3. Meta field in Podcast Feed documents for synonymous album tracks
+  4. Dupfinder playlist class fronting a CouchDB View (for Database Repair)
+
+### iPod and libgpod
+  1. Import iPod tracks to CouchDB
+  2. Replication collision detection and recovery
+  3. iPod wrapper classes that write auto-import and auto-update CouchDB
+  4. Normalize iPod played_date by unwinding roster
+  5. Insert non-roster tracks prior to normalization
+  6. Normalized iPod skipped_date by unwinding roster
+
+### Savvy Playlists
+  1. Umbrella playlist object with history & needle (iterating over views)  
   2. Stagger and Collate as playlist objects
-  3. Dupfinder playlist class fronting a CouchDB View
-  3. Import iPod tracks to CouchDB
-  4. Replication collision detection and recovery
-  5. Normalize iPod played_date by unwinding roster
-  6. Insert non-roster tracks prior to normalization
-  7. Normalized iPod skipped_date by unwinding roster
+  3. Pruning playlist for removing old tracks from iPod
+  4. Process for remote cloning episodes to local and adding to iPod
 
 ## libgpod Modernization
 
