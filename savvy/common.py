@@ -27,7 +27,8 @@ class Delta:
     return self._format(self._value < DELTA_ZERO)
 
   def _format(self, minus=False):
-    delta = str(self._value).strip('[0:]')
+    delta = DELTA_ZERO - self._value if minus else self._value
+    delta = str(delta).strip('[0:]')
     if delta and not re.search(':', delta): delta = " ".join([delta, 'ms'])
     if delta and minus: delta = "-%s" % delta
     return delta
