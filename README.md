@@ -26,34 +26,40 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 # Project Plan -- Short Term
 
-## Database Repair
-  1. Mark orphan files
-  2. transferLibrary ought to mark tracks no longer in iTunes as deleted
-  3. Set up transferLibrary to run periodically (to capture downloads)
-  4. [Save for Later] Implement downloading of podcast feeds
+## iTunes
+  0. Import bookmark_time, playcount and played_date values from backup
+  1. Rerun scan script to confirm we haven't introduced new backups
+  2. Confirm plays post-libgpod actually register in iTunes
 
-## Playlist Prototype
+## CouchDB
+  1. transferLibrary ought to mark tracks no longer in iTunes as deleted
+  2. Set up transferLibrary to run periodically (to capture downloads)
+  3. Determine elegant solution for storing python-language Views to CouchDB
+  4. Replication collision detection and recovery
+  5. Confirm updates don't change revision is no actual changes
 
-### Experimental & Further Repair
-  0. Remove old playlists from iPod
-  1. Confirm updates don't change revision is no actual changes
-  2. Determine elegant solution for storing python-language Views to CouchDB
-  3. Meta field in Podcast Feed documents for synonymous album tracks
-  4. Dupfinder playlist class fronting a CouchDB View (for Database Repair)
+## Repair
+  1. Meta field in Podcast Feed documents for synonymous album tracks
+  2. Dupfinder playlist class fronting a CouchDB
 
-### iPod and libgpod
-  1. Import iPod tracks to CouchDB
-  2. Replication collision detection and recovery
-  3. iPod wrapper classes that write auto-import and auto-update CouchDB
-  4. Normalize iPod played_date by unwinding roster
-  5. Insert non-roster tracks prior to normalization
-  6. Normalized iPod skipped_date by unwinding roster
+## iPod and libgpod
+  1. iPod wrapper classes that write auto-import and auto-update CouchDB
+  2. Normalize iPod played_date by unwinding roster
+  3. Insert non-roster tracks prior to normalization
+  4. Normalized iPod skipped_date by unwinding roster
+  5. Import iPod tracks to CouchDB
 
-### Savvy Playlists
+## Savvy Playlists
   1. Umbrella playlist object with history & needle (iterating over views)  
   2. Stagger and Collate as playlist objects
   3. Pruning playlist for removing old tracks from iPod
   4. Process for remote cloning episodes to local and adding to iPod
+  5. Implement conversion of non-mp3 files to mp3
+  6. Implement conversion of podcast feeds to standard kbps
+
+## Further Repair
+  1. Filter orphans by file extension
+  2. Mark orphan files
 
 ## libgpod Modernization
 

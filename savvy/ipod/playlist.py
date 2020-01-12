@@ -12,6 +12,8 @@ class Playlist:
                                         self.get('name'), len(self._plist))
 
   as_libgpod = property(lambda self: self._plist)
+  is_master_music = property(lambda self: self._plist.get_master())
+  is_master_podcast = property(lambda self: self._plist.get_podcast())
 
   def __iter__(self):
     self._iter = iter(self._plist)
@@ -25,3 +27,7 @@ class Playlist:
 
   def add(self, track, pos=-1):
     self._plist.add(track.as_libgpod, pos)
+
+  def wipe(self):
+    for track in reversed(self._plist):
+      self._plist.remove(track)

@@ -5,7 +5,7 @@ import savvy.common
 import datetime
 
 def savvy_roster(db, name, cap=24, history=None):
-  plist = db.wipe_playlist(name)
+  plist = db.add_playlist(name)
   cap = datetime.timedelta(hours=cap)
   far = datetime.timedelta(hours=0)
 
@@ -73,7 +73,7 @@ def savvy_roster(db, name, cap=24, history=None):
   print "\n%s: %d tracks" % (name, len(plist))
 
 def savvy_history(db, name, cap=24):
-  plist = db.wipe_playlist(name)
+  plist = db.add_playlist(name)
   cap = datetime.timedelta(hours=cap)
   far = datetime.timedelta(hours=0)
 

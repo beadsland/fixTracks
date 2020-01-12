@@ -62,24 +62,30 @@ class Database:
     sema = os.path.join(tempfile.gettempdir(), "do_ipodEjectDaemon_semaphore")
     pathlib.Path(sema).touch()
 
-  def playlists(self):
-    return {p.name: savvy.ipod.playlist.Playlist(p)
-            for p in self._db.get_playlists()}
+  def _all_playlists(self):
+    return {p.name: savvy.ipod.playlist.Playlist(p) for p
+                                                    in self._db.get_playlists()}
+
+  def _user_playlists(self):
+    all = self._all_playlists()
+    return {k: all[k] for k in all if not (all[k].is_master_music
+                                           or all[k].is_master_podcast)}
+
+  playlists = property(lambda self: self._user_playlists())
 
   def get_playlist(self, name):
-    return self.playlists()[name]
+    return self.playlists[name]
 
   def add_playlist(self, name):
-    plist = self._db.new_Playlist(title=name) # weird case in case weird
-    return savvy.ipod.playlist.Playlist(plist)
+    if name in self.playlists:
+      raise ValueError("playlist already exists")
+    else:
+      plist = self._db.new_Playlist(title=name) # weird case in case weird
+      return savvy.ipod.playlist.Playlist(plist)
 
-  def wipe_playlist(self, name):
-    if name not in self.playlists():
-      self.add_playlist(name)
-
-    plist = self.get_playlist(name).as_libgpod
-
-    for track in reversed(plist):
-      plist.remove(track)
-
-    return savvy.ipod.playlist.Playlist(plist)
+  def drop_playlist(self, name):
+    plist = self.playlists[name]
+    if plist.is_master_music or plist.is_master_podcast:
+      raise TypeError("system playlist cannot be removed")
+    plist.wipe()
+    self._db.remove(plist.as_libgpod)
