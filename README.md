@@ -26,12 +26,8 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 # Project Plan -- Short Term
 
-## iTunes
-  1. Rerun scan script to confirm we haven't introduced new backups
-  2. Confirm plays post-libgpod actually register in iTunes
-
 ## CouchDB
-  1. transferLibrary ought to mark tracks no longer in iTunes as deleted
+  1. Rerun scan script to confirm we haven't introduced new backups
   2. Set up transferLibrary to run periodically (to capture downloads)
   3. Determine elegant solution for storing python-language Views to CouchDB
   4. Replication collision detection and recovery

@@ -8,6 +8,7 @@ import sys
 import couchdb
 import html
 import urllib
+import datetime
 
 LIBRARY = os.path.expanduser("~/Qnap/Data/iTunes/iTunes Library.xml")
 
@@ -124,5 +125,24 @@ def save_update(value):
 couch = couchdb.Server("http://192.168.2.52:4000/")
 couch.resource.credentials = ("itunes", "senuti")
 db = couch["audio_library"]
+
+print("Marking presumptive deletions... ")
+mdate = datetime.datetime.fromtimestamp(os.path.getmtime(LIBRARY)).isoformat()
+for key in db:
+  sys.stdout.write("\r> %s: " % key)
+  doc = db[key]
+  if not 'iTunes' in doc:
+    sys.stdout.write(" "*40)
+    continue
+  sys.stdout.write("iTunes: ")
+
+  if '_assume_deleted' in doc['iTunes']:
+    sys.stdout.write("already marked %s" % doc['iTunes']['_assume_deleted'][:19])
+    continue
+  sys.stdout.write("MARKING" + " "*30)
+  doc['iTunes']['_assume_deleted'] = mdate
+  db.save(doc)
+
+print("")
 
 parseLibrary(db)
