@@ -15,6 +15,9 @@ db = savvy.init("/media", "/media/removable/microSD/back")
 
 print "Dropping user playlists..."
 for name in db.playlists: db.drop_playlist(name)
+db.add_playlist("Savvy Playlist")
+db.add_playlist("Savvy History")
+
 print "\nRefreshing savvy history..."
 savvy.messy.savvy_history(db, "Savvy History")
 print "\nRefreshing savvy roster..."
