@@ -2,12 +2,16 @@
 
 # Copyright 2019 Beads Land-Trujillo
 
+print "Importing modules..."
+
 import savvy
 import savvy.messy
 
 import sys
 
 db = savvy.init("/media", "/media/removable/microSD/back")
+
+###savvy.one_shot(db, "/home/beads/Downloads")
 
 print "Dropping user playlists..."
 for name in db.playlists: db.drop_playlist(name)
@@ -21,11 +25,12 @@ print "\nHistory: %d, Roster %d" % (len(db.get_playlist("Savvy History")),
                                     len(db.get_playlist("Savvy Playlist")) -1)
 
 print ""
-for p in reversed(list(db.get_playlist("Savvy History"))[:5]):
-  print p
+for t in reversed(list(db.get_playlist("Savvy History"))[:5]):
+  print t
 sys.stdout.write("--> ")
-for p in list(db.get_playlist("Savvy Playlist"))[:6]:
-  if p.bookmark_time:
-    print "%s [%s]" % (p, savvy.common.Delta(p.bookmark_time))
+for t in list(db.get_playlist("Savvy Playlist"))[:6]:
+  if t.bookmark_time:
+    print "%s [%s]" % (t, savvy.common.Delta(t.bookmark_time))
   else:
-    print p
+    print t
+print ""

@@ -27,7 +27,6 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 # Project Plan -- Short Term
 
 ## iTunes
-  0. Import bookmark_time, playcount and played_date values from backup
   1. Rerun scan script to confirm we haven't introduced new backups
   2. Confirm plays post-libgpod actually register in iTunes
 

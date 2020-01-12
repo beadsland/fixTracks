@@ -62,6 +62,13 @@ class Database:
     sema = os.path.join(tempfile.gettempdir(), "do_ipodEjectDaemon_semaphore")
     pathlib.Path(sema).touch()
 
+  tracks = property(lambda self: self._all_tracks())
+  playlists = property(lambda self: self._user_playlists())
+
+  def _all_tracks(self):
+    tracks = [savvy.ipod.track.Track(t) for t in self._db]
+    return {t.persist_id: t for t in tracks}
+
   def _all_playlists(self):
     return {p.name: savvy.ipod.playlist.Playlist(p) for p
                                                     in self._db.get_playlists()}
@@ -70,8 +77,6 @@ class Database:
     all = self._all_playlists()
     return {k: all[k] for k in all if not (all[k].is_master_music
                                            or all[k].is_master_podcast)}
-
-  playlists = property(lambda self: self._user_playlists())
 
   def get_playlist(self, name):
     return self.playlists[name]

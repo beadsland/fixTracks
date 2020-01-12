@@ -9,7 +9,8 @@ def savvy_roster(db, name, cap=24, history=None):
   cap = datetime.timedelta(hours=cap)
   far = datetime.timedelta(hours=0)
 
-  tracks = [t for t in db if not t.playcount]
+  # We're not yet ready to deal with non-episodic music tracks
+  tracks = [t for t in db if t.is_podcast and not t.playcount]
   tracks = sorted(tracks, key = lambda track: track.release_date_sortable)
 
   current_piles = 2

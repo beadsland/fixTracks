@@ -1,6 +1,9 @@
 # Copyright 2020 Beads Land-Trujillo
 
+import gpod
 import datetime
+import struct
+import binascii
 
 IPOD_NULL = datetime.datetime(1970, 1, 1, 14, 0, 0)
 
@@ -18,17 +21,29 @@ class Track:
   def get(self, key):
     return self._track[key]
 
+  def _set(self, key, value):
+    self._track[key] = value
+
+  def _get_min_date(self,min):
+    return datetime.datetime.min if min else None
+
   def get_date(self, key, min=False):
     try:
       if self.get(key) <= IPOD_NULL:
-        return None
+        return self._get_min_date(min)
       else:
         return self.get(key)
     except:
-      if min:
-        return datetime.datetime.min
-      else:
-        return None
+      return self._get_min_date(min)
+
+  def get_persist_id(self):
+    return hex(self.get('dbid')).rstrip('L').lstrip('0x').rjust(16, '0').upper()
+
+  def _is_podcast(self):
+    return self.get('mediatype') == gpod.ITDB_MEDIATYPE_PODCAST
+
+  persist_id = property(lambda self: self.get_persist_id())
+  is_podcast = property(lambda self: self._is_podcast())
 
   release_date = property(lambda self: self.get_date('time_released'))
   release_date_sortable = property(lambda s: s.get_date('time_released', True))
@@ -43,3 +58,12 @@ class Track:
   # need a method that checks for podcast alias album names
   album_title = property(lambda self: self.get('album'))
   podcast_title = property(lambda self: self.album_title)
+
+  def _conform_property(self, track, key):
+    if track.get(key) is not None:
+      self._set(key, track.get(key))
+
+  def conform(self, track):
+    self._conform_property(track, 'time_played')
+    self._conform_property(track, 'bookmark_time')
+    self._conform_property(track, 'playcount')
