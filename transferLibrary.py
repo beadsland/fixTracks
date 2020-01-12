@@ -132,7 +132,7 @@ for key in db:
   sys.stdout.write("\r> %s: " % key)
   doc = db[key]
   if not 'iTunes' in doc:
-    sys.stdout.write(" "*40)
+    sys.stdout.write("not an iTunes record "*20)
     continue
   sys.stdout.write("iTunes: ")
 
