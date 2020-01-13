@@ -89,6 +89,7 @@ def match_tracks(dirs):
   couch.resource.credentials = ("itunes", "senuti")
   db = couch['audio_library']
   for id in db:
+    if '_deleted' in db[id]['iTunes']: continue
     if db[id]['iTunes']['Track Type'] == "URL": continue
     if db[id]['iTunes']['Location'].startswith("file://localhost/N:/Torrents/"): continue
 
