@@ -78,6 +78,7 @@ def parseDict(fp, next):
   return dict
 
 def parseLibrary(db):
+  seen = []
   with open(LIBRARY, 'r') as fp:
     while True:
       line = fp.readline().strip()
@@ -89,7 +90,7 @@ def parseLibrary(db):
       line = fp.readline().strip()
       if line == "<dict>": break
 
-    print("Parsing tracks...")
+    print("Pushing tracks from itunes xml to couchdb...")
 
     while True:
       line = fp.readline().strip()
@@ -101,7 +102,8 @@ def parseLibrary(db):
       line = fp.readline().strip()
       value = parseDict(fp, "</dict>")
       value['iTunes Library'] = state
-      save_update(value)
+      save_update(db, value)
+      seen.append(value['Persistent ID']) # _persist_id
 
     line = fp.readline().strip()
     if line == "<key>Playlists</key>":
@@ -115,34 +117,38 @@ def parseLibrary(db):
       if not line: break
       print(line)
 
-def save_update(value):
-  id = "Persistent ID %s" % value["Persistent ID"]
+  return seen
+
+def save_update(db, node):
+  node["_persist_id"] = node["Persistent ID"]
+  id = "Persistent ID %s" % node["_persist_id"]
   doc = db.get(id, default={"_id": id})
-  value["_revdate"] = value["iTunes Library"]["Date"]
-  doc["iTunes"] = value
+
+  node["_revdate"] = node["iTunes Library"]["Date"]
+  doc["iTunes"] = node
   db.save(doc)
+
+# Main routine starts here...
 
 couch = couchdb.Server("http://192.168.2.52:4000/")
 couch.resource.credentials = ("itunes", "senuti")
 db = couch["audio_library"]
-
-print("Marking presumptive deletions... ")
 mdate = datetime.datetime.fromtimestamp(os.path.getmtime(LIBRARY)).isoformat()
-for key in db:
-  sys.stdout.write("\r> %s: " % key)
-  doc = db[key]
-  if not 'iTunes' in doc:
-    sys.stdout.write("not an iTunes record "*20)
-    continue
-  sys.stdout.write("iTunes: ")
+seen = parseLibrary(db)
 
-  if '_assume_deleted' in doc['iTunes']:
-    sys.stdout.write("already marked %s" % doc['iTunes']['_assume_deleted'][:19])
-    continue
-  sys.stdout.write("MARKING" + " "*30)
-  doc['iTunes']['_assume_deleted'] = mdate
-  db.save(doc)
+print("\nMarking presumptive deletions... ")
+presume = [doc for doc in couch if 'iTunes' in doc]
+presume = [doc for doc in presume if '_persist_id' not in doc['iTunes']
+                                  or doc['iTunes']['_persist_id'] not in seen]
+presume = [doc for doc in presume if '_persist_id' not in doc['iTunes']
+                                  or '_deleted' not in doc['iTunes']]
 
-print("")
+print(presume)
 
-parseLibrary(db)
+for doc in presume:
+  key = doc['iTunes']['Persistent ID']
+  sys.stdout.write("\r> Marking %s" % key)
+  doc['iTunes']['_persist_id'] = key
+  del(doc['iTunes']['_assume_deleted'])
+  doc['iTunes']['_deleted'] = mdate
+  db.save(db, doc)

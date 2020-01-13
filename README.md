@@ -28,7 +28,7 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 ## CouchDB
   1. Rerun scan script to confirm we haven't introduced new dups
-  2. Only mark presumed deleted if not in current export
+  2. Refactor \_deleted and apply to changes in ipod tracks
   3. Copy artwork data from iPod
   4. Replication collision detection and recovery
 
