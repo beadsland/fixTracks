@@ -3,6 +3,8 @@
 import savvy.ipod.track
 import savvy.ipod.playlist
 
+import gpod
+
 import os
 import usb.core
 import tempfile
@@ -14,7 +16,11 @@ IPOD_BORN = datetime.datetime(2001, 10, 23, 0, 0, 0)
 
 class Database:
   def __init__(self, path):
-    import gpod
+    idb_path = os.path.join(path, IPOD_CTRL, 'iTunes', 'iTunesDB')
+    mdate = datetime.datetime.fromtimestamp(os.path.getmtime(idb_path))
+    if mdate < IPOD_BORN: mdate = datetime.datetime.now()
+
+    self._mdate = mdate
     self._db = gpod.Database(path, None)
 
   def normalize_bad_clocktime(self):
@@ -36,6 +42,7 @@ class Database:
         t.as_libgpod['time_played'] = fixtime
 
   as_libgpod = property(lambda self: self._db)
+  modified_date = property(lambda self: self._mdate)
 
   def __iter__(self):
     self._n = 0

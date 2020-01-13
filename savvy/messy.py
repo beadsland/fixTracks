@@ -39,8 +39,7 @@ def savvy_roster(db, name, cap=24, history=None):
   hist = sorted(hist, key = lambda track: track.played_date)
   (_cap, _run, hist) = reduce(span_subset_clean, hist,
                                  (cap * total_piles, ZERO_TIME, []))
-  hist2 = sorted(hist, key = lambda track: track.get_date('time_released',
-                                                            True))
+  hist2 = sorted(hist, key = lambda track: track.get('time_released', True))
   hist1 = reversed(hist2)
   (_cap, _run, hist2) = reduce(span_subset, hist2,
                                  (cap * history_piles, ZERO_TIME, {}))

@@ -3,17 +3,40 @@
 # Copyright 2019 Beads Land-Trujillo
 
 print "Importing modules..."
-
 import savvy
 import savvy.messy
 
 import sys
+import couchdb
 
 db = savvy.init("/media", "/media/removable/microSD/back")
 
+print "Pushing ipod records to couchdb..."
+
+def save_update(cdb, track, mdate):
+  id = "Persistent ID %s" % track.persist_id
+  doc = cdb.get(id, default={"_id": id})
+  doc["iPod"] = track.dump()
+  doc["iPod"]["_revdate"] = mdate
+  try:
+    cdb.save(doc)
+  except:
+    print(doc)
+    exit()
+
+couch = couchdb.Server("http://127.0.0.1:5984/")
+couch.resource.credentials = ("itunes", "senuti")
+cdb = couch["audio_library"]
+
+mdate = db.modified_date.isoformat()
+for track in sorted(db, key=lambda self: self.persist_id):
+  sys.stdout.write("\r> %s  " % track.persist_id)
+  save_update(cdb, track, mdate)
+print ""
+
 ###savvy.one_shot(db, "/home/beads/Downloads")
 
-print "Dropping user playlists..."
+print "\nDropping user playlists..."
 for name in db.playlists: db.drop_playlist(name)
 db.add_playlist("Savvy Playlist")
 db.add_playlist("Savvy History")

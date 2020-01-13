@@ -27,30 +27,35 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 # Project Plan -- Short Term
 
 ## CouchDB
-  1. Rerun scan script to confirm we haven't introduced new backups
-  2. Set up transferLibrary to run periodically (to capture downloads)
-  3. Determine elegant solution for storing python-language Views to CouchDB
+  1. Rerun scan script to confirm we haven't introduced new dups
+  2. Only mark presumed deleted if not in current export
+  3. Copy artwork data from iPod
   4. Replication collision detection and recovery
-  5. Confirm updates don't change revision is no actual changes
 
 ## Repair
   1. Meta field in Podcast Feed documents for synonymous album tracks
   2. Dupfinder playlist class fronting a CouchDB
 
+## Further CouchDB
+  1. Confirm updates don't change revision if no actual changes
+  2. Set up transferLibrary to run periodically (to capture downloads)
+  3. Process to recover iPod from CouchDB after iTunes sync
+
 ## iPod and libgpod
-  1. iPod wrapper classes that write auto-import and auto-update CouchDB
   2. Normalize iPod played_date by unwinding roster
   3. Insert non-roster tracks prior to normalization
   4. Normalized iPod skipped_date by unwinding roster
-  5. Import iPod tracks to CouchDB
 
 ## Savvy Playlists
-  1. Umbrella playlist object with history & needle (iterating over views)  
-  2. Stagger and Collate as playlist objects
-  3. Pruning playlist for removing old tracks from iPod
-  4. Process for remote cloning episodes to local and adding to iPod
-  5. Implement conversion of non-mp3 files to mp3
-  6. Implement conversion of podcast feeds to standard kbps
+  1. Determine elegant solution for storing python-language Views to CouchDB
+  2. Umbrella playlist object with history & needle (iterating over views)  
+  3. Stagger and Collate as playlist objects
+
+## Incremental Updates
+  4. Pruning playlist for removing old tracks from iPod
+  5. Process for remote cloning episodes to local and adding to iPod
+  6. Implement conversion of non-mp3 files to mp3
+  7. Implement conversion of podcast feeds to standard kbps
 
 ## Further Repair
   1. Filter orphans by file extension

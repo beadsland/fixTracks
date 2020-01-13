@@ -18,23 +18,40 @@ class Track:
 
   as_libgpod = property(lambda self: self._track)
 
-  def get(self, key):
-    return self._track[key]
+  def dump(self):
+    json = {'_persist_id': self.persist_id}
+    for key in self._track:
+      value = self.get(key)
+
+      if type(value) is datetime.datetime:
+        json[key] = value.isoformat()
+      elif type(value) in [gpod.gpod._Itdb_iTunesDB, gpod.gpod._Itdb_Artwork]:
+        pass
+      elif type(value).__name__ == 'SwigPyObject':
+        pass
+      else:
+        json[key] = value.decode('utf-8') if type(value) is str else value
+    return json
+
+  def get(self, key, sortdate=False):
+    try:
+      value = self._track[key]
+    except:
+      return datetime.datetime.min if sortdate else None
+
+    if type(value) is datetime.datetime:
+      return self._sortable_date(value, sortdate)
+    else:
+      return value
+
+  def _sortable_date(self, value, sortdate=False):
+    if value <= IPOD_NULL:
+      return datetime.datetime.min if sortdate else None
+    else:
+      return value
 
   def _set(self, key, value):
     self._track[key] = value
-
-  def _get_min_date(self,min):
-    return datetime.datetime.min if min else None
-
-  def get_date(self, key, min=False):
-    try:
-      if self.get(key) <= IPOD_NULL:
-        return self._get_min_date(min)
-      else:
-        return self.get(key)
-    except:
-      return self._get_min_date(min)
 
   def get_persist_id(self):
     return hex(self.get('dbid')).rstrip('L').lstrip('0x').rjust(16, '0').upper()
@@ -45,9 +62,9 @@ class Track:
   persist_id = property(lambda self: self.get_persist_id())
   is_podcast = property(lambda self: self._is_podcast())
 
-  release_date = property(lambda self: self.get_date('time_released'))
-  release_date_sortable = property(lambda s: s.get_date('time_released', True))
-  played_date = property(lambda self: self.get_date('time_played'))
+  release_date = property(lambda self: self.get('time_released'))
+  release_date_sortable = property(lambda self: self.get('time_released', True))
+  played_date = property(lambda self: self.get('time_played'))
 
   bookmark_time = property(lambda self: self.get('bookmark_time'))
   tracklen_time = property(lambda self: self.get('tracklen'))
