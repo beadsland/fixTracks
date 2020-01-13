@@ -92,12 +92,14 @@ def parseLibrary(db):
 
     print("Pushing tracks from itunes xml to couchdb...")
 
+    count = 0
     while True:
       line = fp.readline().strip()
       if line == "</dict>": break
       m = re.match(r"<key>(.*)</key>", line)
       key = m.group(1)
-      sys.stdout.write("> %s               \r" % key)
+      count += 1
+      sys.stdout.write("> %d: key %s          \r" % (count, key))
 
       line = fp.readline().strip()
       value = parseDict(fp, "</dict>")
