@@ -3,6 +3,8 @@
 import re
 import datetime
 DELTA_ZERO = datetime.timedelta(days = 0)
+DELTA_MIN1 = datetime.timedelta(minutes = 1)
+DELTA_SEC1 = datetime.timedelta(seconds = 1)
 
 class ReprArray:
   def __init__(self, arr, max=3):
@@ -24,14 +26,15 @@ class Delta:
     self._value = datetime.timedelta(milliseconds = ms)
 
   def __repr__(self):
-    return self._format(self._value < DELTA_ZERO)
+    if self._value < DELTA_ZERO:
+      return "-%s" % self._format(DELTA_ZERO - self._value)
+    else:
+      return self._format(self._value)
 
-  def _format(self, minus=False):
-    delta = DELTA_ZERO - self._value if minus else self._value
-    delta = str(delta).strip('[0:]')
-    if delta and not re.search(':', delta): delta = " ".join([delta, 'ms'])
-    if delta and minus: delta = "-%s" % delta
-    return delta
+  def _format(self, delta):
+    if delta < DELTA_SEC1: return "%f ms" % (delta.microseconds / 1000)
+    if delta < DELTA_MIN1: return "%d s" % delta.seconds
+    return re.sub(r'\.[0-9]+$', '', str(delta).lstrip('[0:]'))
 
   def advance(self, ms):
     self._value = self._value - datetime.timedelta(milliseconds = ms)

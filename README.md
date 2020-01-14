@@ -40,7 +40,6 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 ### Data Import
   1. Rerun scan script to confirm we haven't introduced new dups
-  2. More concision in Delta for use by `transferLibrary.py`
 
 ### Refactor
   1. Refactor itunes.database from `transferLibrary.py`

@@ -102,7 +102,7 @@ def parseLibrary(db):
       key = m.group(1)
       count += 1
       eta = (datetime.datetime.now() - start) / count * (total-count)
-      eta = re.sub(r'\.[0-9]+', "", str(eta)).lstrip('[:0]')
+      eta = savvy.common.Delta(eta)
       sys.stdout.write("> %2.1f%% (%d): key %s [eta %s]     \r" \
                        % (count/total*100, count, key, eta))
 
