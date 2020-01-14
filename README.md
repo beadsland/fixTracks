@@ -29,14 +29,27 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## CouchDB
 
 ### Data Import
-  1. Rerun scan script to confirm we haven't introduced new dups
-  2. Refactor \_deleted and apply to changes in ipod tracks
-  3. Copy artwork data from iPod
-  4. Replication collision detection and recovery
+  0. Rerun scan script to confirm we haven't introduced new dups
+  1. Fix `transferLibrary.py` to correctly mark deletions
+  2. More concision in Delta for use by `transferLibrary.py`
+
+### Refactor
+  1. Refactor itunes.database from `transferLibrary.py`
+  2. Refactor couch.database from `transferLibrary.py`
+  3. Determine elegant solution for storing python-language Views to CouchDB
+  4. Common pophash to cull down to deleted tracks
+  5. Refactor `transferLibrary.py` for common use in iPod sync
+  6. Refactor data import to use `pv` for progress bar
+
+### Finalize
+  1. Import from good backup to pick up old tracks
+  2. Copy artwork data from iPod
+  3. Replication collision detection and recovery
 
 ### Repair
   1. Meta field in Podcast Feed documents for synonymous album tracks
   2. Dupfinder playlist class fronting a CouchDB
+  3. Dup removal from iTunes database
 
 ### Further CouchDB
   1. Confirm updates don't change revision if no actual changes
@@ -46,14 +59,16 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## iPod Sync
 
 ### iPod and libgpod
-  1. Normalize iPod played_date by unwinding roster
-  2. Insert non-roster tracks prior to normalization
-  3. Normalized iPod skipped_date by unwinding roster
+  1. Unique ID for identifying an iPod
+  2. Normalize iPod played_date by unwinding roster
+  3. Insert non-roster tracks prior to normalization
+  4. Normalized iPod skipped_date by unwinding roster
 
 ### Savvy Playlists
-  1. Determine elegant solution for storing python-language Views to CouchDB
+  1. Parameterized view for marking deleted tracks
   2. Umbrella playlist object with history & needle (iterating over views)  
   3. Stagger and Collate as playlist objects
+  4. Implement support for inclusion of music tracks
 
 ### Incremental Updates
   1. Pruning playlist for removing old tracks from iPod
@@ -61,11 +76,13 @@ _See_ [README: Playlists](doc/README_Playlists.md)
   3. Implement conversion of non-mp3 files to mp3
   4. Implement conversion of podcast feeds to standard kbps
 
-## Further Repair
+## Et cetera
+
+### Further Repair
   1. Filter orphans by file extension
   2. Mark orphan files
 
-## libgpod Modernization
+### libgpod Modernization
 
 This prong of development is on hold for the moment.
 
