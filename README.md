@@ -2,6 +2,16 @@ Migrating my 2 terabyte iTunes database to a custom CouchDB-backed media
 management system that provides for _savvy_, rather than merely smart, playlists
 and improved performance in managing large, even distributed, podcast libraries.
 
+Presently, the `parseIpod.py` script is set up to create a collation of two
+staggered playlists, one historical the other contemporary, drawing entirely
+from the tracks in place on the iPod. Staggers account for recent plays.
+
+History playlist captures played tracks (and addresses issues where the iPod
+clock hasn't been set, such as after a battery change), but doesn't yet account
+for skipped (_i.e._, incomplete) plays. Similarly, the needle (or first) track
+of the main playlist doesn't yet know what skipped track was last played, so
+selects the first track with a bookmark.
+
 # Purpose
 
 I currently maintain a 2 terabyte library of podcasts, which I listen to in a
