@@ -29,8 +29,7 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## CouchDB
 
 ### Data Import
-  0. Rerun scan script to confirm we haven't introduced new dups
-  1. Fix `transferLibrary.py` to correctly mark deletions
+  1. Rerun scan script to confirm we haven't introduced new dups
   2. More concision in Delta for use by `transferLibrary.py`
 
 ### Refactor

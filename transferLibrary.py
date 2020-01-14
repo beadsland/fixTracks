@@ -92,14 +92,19 @@ def parseLibrary(db):
 
     print("Pushing tracks from itunes xml to couchdb...")
 
+    start = datetime.datetime.now()
     count = 0
+    total = len(db)
     while True:
       line = fp.readline().strip()
       if line == "</dict>": break
       m = re.match(r"<key>(.*)</key>", line)
       key = m.group(1)
       count += 1
-      sys.stdout.write("> %d: key %s          \r" % (count, key))
+      eta = (datetime.datetime.now() - start) / count * (total-count)
+      eta = re.sub(r'\.[0-9]+', "", str(eta)).lstrip('[:0]')
+      sys.stdout.write("> %2.1f%% (%d): key %s [eta %s]     \r" \
+                       % (count/total*100, count, key, eta))
 
       line = fp.readline().strip()
       value = parseDict(fp, "</dict>")
@@ -128,6 +133,7 @@ def save_update(db, node):
 
   node["_revdate"] = node["iTunes Library"]["Date"]
   doc["iTunes"] = node
+  doc["persist_id"] = node["_persist_id"]
   db.save(doc)
 
 # Main routine starts here...
@@ -138,19 +144,27 @@ db = couch["audio_library"]
 mdate = datetime.datetime.fromtimestamp(os.path.getmtime(LIBRARY)).isoformat()
 seen = parseLibrary(db)
 
-print("\nMarking presumptive deletions... ")
-presume = [doc for doc in couch if 'iTunes' in doc]
-presume = [doc for doc in presume if '_persist_id' not in doc['iTunes']
-                                  or doc['iTunes']['_persist_id'] not in seen]
-presume = [doc for doc in presume if '_persist_id' not in doc['iTunes']
-                                  or '_deleted' not in doc['iTunes']]
+#seen = [db[key] for key in db if '_assume_deleted' not in db[key]['iTunes']]
+#seen = [doc['iTunes']['_persist_id'] for doc in seen]
+print(len(seen))
 
-print(presume)
+print("\nMarking deletions... ")
+presume = [db[key] for key in db if 'iTunes' in db[key]]
+print(len(presume))
+presume = [doc for doc in presume if doc['iTunes']['Persistent ID'] not in seen]
+print(len(presume))
+presume = [doc for doc in presume if '_deleted' not in doc['iTunes']]
+print(len(presume))
+
+for p in presume:
+  print("* %s: %s" % (p['_id'], p))
 
 for doc in presume:
   key = doc['iTunes']['Persistent ID']
   sys.stdout.write("\r> Marking %s" % key)
   doc['iTunes']['_persist_id'] = key
-  del(doc['iTunes']['_assume_deleted'])
+  doc['persist_id'] = key
+  if '_assume_deleted' in doc['iTunes']:
+    del(doc['iTunes']['_assume_deleted'])
   doc['iTunes']['_deleted'] = mdate
-  db.save(db, doc)
+  db.save(doc)
