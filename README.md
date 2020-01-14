@@ -37,23 +37,23 @@ _See_ [README: Playlists](doc/README_Playlists.md)
   2. Refactor couch.database from `transferLibrary.py`
   3. Determine elegant solution for storing python-language Views to CouchDB
   4. Common pophash to cull down to deleted tracks
-  5. Refactor `transferLibrary.py` for common use in iPod sync
   6. Refactor data import to use `pv` for progress bar
 
-### Finalize
-  1. Import from good backup to pick up old tracks
+### iPod
+  1. Refactor `transferLibrary.py` for common use in iPod sync
   2. Copy artwork data from iPod
-  3. Replication collision detection and recovery
+  3. Process to recover iPod from CouchDB after iTunes sync
+  4. Import from good backup to pick up old tracks
+  5. Replication collision detection and recovery
 
 ### Repair
-  1. Meta field in Podcast Feed documents for synonymous album tracks
-  2. Dupfinder playlist class fronting a CouchDB
+  1. Dupfinder playlist class fronting a CouchDB
+  2. Meta field in Podcast Feed documents for synonymous album tracks
   3. Dup removal from iTunes database
 
-### Further CouchDB
+### CouchDB
   1. Confirm updates don't change revision if no actual changes
   2. Set up transferLibrary to run periodically (to capture downloads)
-  3. Process to recover iPod from CouchDB after iTunes sync
 
 ## iPod Sync
 
@@ -64,10 +64,9 @@ _See_ [README: Playlists](doc/README_Playlists.md)
   4. Normalized iPod skipped_date by unwinding roster
 
 ### Savvy Playlists
-  1. Parameterized view for marking deleted tracks
-  2. Umbrella playlist object with history & needle (iterating over views)  
-  3. Stagger and Collate as playlist objects
-  4. Implement support for inclusion of music tracks
+  1. Umbrella playlist object with history & needle (iterating over views)  
+  2. Stagger and Collate as playlist objects
+  3. Implement support for inclusion of music tracks
 
 ### Incremental Updates
   1. Pruning playlist for removing old tracks from iPod
