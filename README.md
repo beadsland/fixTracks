@@ -39,19 +39,22 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## CouchDB
 
 ### Reengineer
-  1. Trigger StopIteration in `scanUntrackedFiles.py`
-  2. Confirm utf-8 in `savvy.itunes.database` doesn't break `scanUntrackedFiles.py`
-  3. Simplify itunes.database exception generation to use default language
-  4. Use bulk uploads rather than individual saves
-  5. Datetime/String subclass to allow json.dump of datetime objects
-  6. JsonData class for parsing data fields in `iTunes Library.xml`
+  1. Fix unicode handling in `savvy.itunes.database` following downgrade to python2
+  2. Trigger StopIteration in `scanUntrackedFiles.py`
 
 ### Refactor
   1. Refactor couch.database from `transferLibrary.py`
-  2. Determine elegant solution for storing python-language Views to CouchDB
-  3. Common lazydict to cull down to deleted tracks
-  4. Refactor data import to use `pv` for progress bar
-  5. Module loading scheme using `pv` (???)
+  2. Use bulk uploads rather than individual saves
+  3. Determine elegant solution for storing python-language Views to CouchDB
+  4. Common lazydict to cull down to deleted tracks
+
+### Reengineer
+  1. Refactor data import to use `pv` for progress bar
+  2. Module loading scheme using `pv` (???)
+  3. Correctly handle playlist parsing in itunes.database
+  4. Simplify itunes.database exception generation to use default language
+  5. Datetime/String subclass to allow json.dump of datetime objects
+  6. JsonData class for parsing data fields in `iTunes Library.xml`
 
 ### iPod
   1. Refactor `transferLibrary.py` for common use in iPod sync
