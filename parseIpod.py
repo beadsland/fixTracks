@@ -3,13 +3,13 @@
 # Copyright 2019 Beads Land-Trujillo
 
 print "Importing modules..."
-import savvy
+import savvy.ipod
 import savvy.messy
 
 import sys
 import couchdb
 
-db = savvy.init("/media", "/media/removable/microSD/back")
+db = savvy.ipod.init("/media", "/media/removable/microSD/back")
 
 print "Pushing ipod records to couchdb..."
 
@@ -34,7 +34,7 @@ for track in sorted(db, key=lambda self: self.persist_id):
   save_update(cdb, track, mdate)
 print ""
 
-###savvy.one_shot(db, "/home/beads/Downloads")
+###savvy.ipod_one_shot(db, "/home/beads/Downloads")
 
 print "\nDropping user playlists..."
 for name in db.playlists: db.drop_playlist(name)
