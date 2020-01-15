@@ -1,5 +1,6 @@
 # Copyright 2019 Beads Land-Trujillo
 
+import io
 import re
 import datetime
 import urlparse
@@ -14,7 +15,7 @@ class Database:
     self._path = path
 
   def __iter__(self):
-    self._fp = open(self._path, 'r')
+    self._fp = io.open(self._path, mode="r", encoding="utf-8")
     self._skip_to("<dict>")
     self._state = self._parse_dict("<key>Tracks</key>")
     self._read_as("<dict>", "dict expected")
@@ -95,17 +96,18 @@ class Database:
     if n is None:
       raise LibraryException("expected container tag: %s"
                              % value.replace("\n", "\\n"))
-    (type, value) = n.group(1, 2)
-    if type == "date": return key, value
+    (typ, value) = n.group(1, 2)
+    if typ == "date": return key, value
 #    if type == "date":
 #      dt = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
 #      return key, savvy.common.Datetime(dt)
-    if type == "string":
-      return key, urlparse.unquote(HTMLParser.unescape(value.decode('utf-8')))
-    if type == "integer": return key, int(value)
-    if type == "float": return key, float(value)
+    if typ == "string" and key != "Location": return key, value
+    if typ == "string":
+      return key, urlparse.unquote(HTMLParser.unescape(value.encode('utf-8')))
+    if typ == "integer": return key, int(value)
+    if typ == "float": return key, float(value)
     raise LibraryException("unknown type: %s: %s" \
-                           % (type, value.replace("\n", "\\n")))
+                           % (typ, value.replace("\n", "\\n")))
 
   def _parse_data():
     value = ""
