@@ -43,7 +43,7 @@ class Database:
     if line != text: raise LibraryException("%s: %s" % (err, line))
 
   def _skip_playlists(self):
-    self.read_as("<key>Playlists</key>", "unexpected section")
+    self._read_as("<key>Playlists</key>", "unexpected section")
     self._read_as("<dict>", "dict expected")
     self._read_as("<array>", "array expected")
     self._plists = {p['Name']: p for p in self._parse_array()}
