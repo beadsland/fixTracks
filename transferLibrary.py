@@ -1,128 +1,34 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 # Copyright 2019 Beads Land-Trujillo
 
-import os
-import re
-import sys
+print "Loading modules..."
+import savvy.itunes.database
+import savvy.common
 import couchdb
-import html
-import urllib
+
+import os
 import datetime
+import sys
 
 LIBRARY = os.path.expanduser("~/Qnap/Data/iTunes/iTunes Library.xml")
 
-def is_int(v):
-  try: int(v)
-  except ValueError: return False
-  else: return True
-
-def is_float(v):
-  if len(v) >= 16: return False
-  try: float(v)
-  except ValueError: return False
-  else: return float(v) != float("inf")
-
-def parseKeyValue(fp, line):
-  m = re.match(r"<key>(.*)</key>(.*)", line)
-  key = m.group(1)
-  value = m.group(2)
-  if value == "<true/>": return key, True
-  if value == "<false/>": return key, False
-
-  while not re.search("</[^>]+>", value):
-    more = fp.readline().strip()
-    if more == "<array>": return key, parseArray(fp)
-    if more == "<data>": return key, parseData(fp, "<data>")
-    value = "%s\n%s" % (value, more)
-  n = re.match(r"<[^>]+>([^<]+)</[^>]+>", value)
-  if n is not None:
-    value = n.group(1)
-    if is_int(value): return key, int(value)
-    if is_float(value): return key, float(value)
-    return key, urllib.parse.unquote(html.unescape(value))
-  else:
-    print("fail: %s" % value)
-    exit()
-
-def parseData(fp, value):
-  while not re.search("</[^>]+>", value):
-    more = fp.readline().strip()
-    value = "%s\n%s" % (value, more)
-  n = re.match(r"<data>([^<]+)</data>", value)
-  return "data(%s)" % n.group(1).strip()
-
-def parseArray(fp):
-  arr = []
-  while True:
-    line = fp.readline().strip()
-    if line == "</array>": break
-    if line == "<dict>":
-      dict = parseDict(fp, "</dict>")
-      if "Name" in dict: print(dict["Name"])
-      arr.append(dict)
-  return arr
-
-def parseDict(fp, next):
-  dict = {}
-  while True:
-    line = fp.readline().strip()
-    if line == next: break
-    else:
-      k, v = parseKeyValue(fp, line)
-      if k in dict:
-        if type(dict[k]) is not list: dict[k] = [dict[k]]
-        dict[k].append(v)
-      else:
-        dict[k] = v
-  return dict
-
-def parseLibrary(db):
+def parseLibrary(cdb):
   seen = []
-  with open(LIBRARY, 'r') as fp:
-    while True:
-      line = fp.readline().strip()
-      if line == "<dict>": break
+  start = datetime.datetime.now()
+  count = 0
+  total = len(cdb)
 
-    state = parseDict(fp, "<key>Tracks</key>")
+  for item in savvy.itunes.database.Database(LIBRARY):
+    count += 1
+    eta = (datetime.datetime.now() - start) / count * (total-count)
+    eta = savvy.common.Delta(eta)
 
-    while True:
-      line = fp.readline().strip()
-      if line == "<dict>": break
+    save_update(cdb, item)
+    seen.append(item['_persist_id'])
 
-    print("Pushing tracks from itunes xml to couchdb...")
-
-    start = datetime.datetime.now()
-    count = 0
-    total = len(db)
-    while True:
-      line = fp.readline().strip()
-      if line == "</dict>": break
-      m = re.match(r"<key>(.*)</key>", line)
-      key = m.group(1)
-      count += 1
-      eta = (datetime.datetime.now() - start) / count * (total-count)
-      eta = savvy.common.Delta(eta)
-      sys.stdout.write("> %2.1f%% (%d): key %s [eta %s]     \r" \
-                       % (count/total*100, count, key, eta))
-
-      line = fp.readline().strip()
-      value = parseDict(fp, "</dict>")
-      value['iTunes Library'] = state
-      save_update(db, value)
-      seen.append(value['Persistent ID']) # _persist_id
-
-    line = fp.readline().strip()
-    if line == "<key>Playlists</key>":
-      print("\nDiscarding playlists...")
-      line = fp.readline().strip()
-      if line == "<array>": print(len(parseArray(fp)))
-      if line != "<array>": print("huh: %s" % line)
-
-    while True:
-      line = fp.readline().strip()
-      if not line: break
-      print(line)
+    sys.stdout.write("> %2.1f%% (%d): key %s [eta %s]     \r" \
+                    % (count/total*100, count, item['Track ID'], eta))
 
   return seen
 
@@ -138,10 +44,13 @@ def save_update(db, node):
 
 # Main routine starts here...
 
+print "Loading couch database..."
 couch = couchdb.Server("http://192.168.2.52:4000/")
 couch.resource.credentials = ("itunes", "senuti")
 db = couch["audio_library"]
 mdate = datetime.datetime.fromtimestamp(os.path.getmtime(LIBRARY)).isoformat()
+
+print "Parsing library..."
 seen = parseLibrary(db)
 
 #seen = [db[key] for key in db if '_assume_deleted' not in db[key]['iTunes']]

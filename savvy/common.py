@@ -2,6 +2,7 @@
 
 import re
 import datetime
+
 DELTA_ZERO = datetime.timedelta(days = 0)
 DELTA_MIN1 = datetime.timedelta(minutes = 1)
 DELTA_SEC1 = datetime.timedelta(seconds = 1)
@@ -23,7 +24,10 @@ class Literal:
 
 class Delta:
   def __init__(self, ms=0):
-    self._value = datetime.timedelta(milliseconds = ms)
+    if type(ms) is datetime.timedelta:
+      self._value = ms
+    else:
+      self._value = datetime.timedelta(milliseconds = ms)
 
   def __repr__(self):
     if self._value < DELTA_ZERO:
