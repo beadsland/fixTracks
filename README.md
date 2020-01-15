@@ -39,11 +39,12 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## CouchDB
 
 ### Reengineer
-  1. Trigger StopIteration on in `scanUntrackedFiles.py`
-  2. Confirm decode('utf-8') in `savvy.itunes.database` doesn't break `scanUntrackedFiles.py`
+  1. Trigger StopIteration in `scanUntrackedFiles.py`
+  2. Confirm utf-8 in `savvy.itunes.database` doesn't break `scanUntrackedFiles.py`
   3. Simplify itunes.database exception generation to use default language
-  4. Datetime/String subclass to allow json.dump to date datetimes
-  5. JsonData class for parsing data fields in `iTunes Library.xml`
+  4. Use bulk uploads rather than individual saves
+  5. Datetime/String subclass to allow json.dump of datetime objects
+  6. JsonData class for parsing data fields in `iTunes Library.xml`
 
 ### Refactor
   1. Refactor couch.database from `transferLibrary.py`
