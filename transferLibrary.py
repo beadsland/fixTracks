@@ -19,6 +19,8 @@ def parseLibrary(cdb):
   count = 0
   total = len(cdb)
 
+  print "Total tracks (in couch): %d" % total
+
   for item in savvy.itunes.database.Database(LIBRARY):
     count += 1
     eta = (datetime.datetime.now() - start) / count * (total-count)
@@ -28,7 +30,7 @@ def parseLibrary(cdb):
     seen.append(item['_persist_id'])
 
     sys.stdout.write("> %2.1f%% (%d): key %s [eta %s]     \r" \
-                    % (count/total*100, count, item['Track ID'], eta))
+                    % (float(count)/total*100, count, item['Track ID'], eta))
 
   return seen
 
