@@ -44,12 +44,9 @@ class Database:
     if line != text: raise LibraryException("%s: %s" % (err, line))
 
   def _skip_playlists(self):
-    self.read_as("<key>Playlists</key>", "unexpected section")
-    self._read_as("<dict>", "dict expected")
+    self._read_as("<key>Playlists</key>", "unexpected section")
     self._read_as("<array>", "array expected")
     self._plists = {p['Name']: p for p in self._parse_array()}
-    self._read_as("</dict>", "dict closure expected")
-    self._read_as("</array>", "array closure expected")
     self._read_as("</dict>", "dict closure expected")
     self._read_as("</plist>", "property list closure expected")
     raise StopIteration
@@ -74,7 +71,6 @@ class Database:
       line = self._next_line()
       if line == "</array>": break
       if line != "<dict>": raise LibraryException("expected dict: %s" % line)
-
       arr.append(self._parse_dict())
     return arr
 
@@ -109,8 +105,8 @@ class Database:
     raise LibraryException("unknown type: %s: %s" \
                            % (typ, value.replace("\n", "\\n")))
 
-  def _parse_data():
-    value = ""
+  def _parse_data(self):
+    value = "<data>"
     while not re.search("</data>", value):
       more = self._next_line()
       value = "%s\n%s" % (value, more)

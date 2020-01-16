@@ -39,8 +39,7 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## CouchDB
 
 ### Reengineer
-  1. Correctly handle playlist parsing in itunes.database 
-  2. Trigger StopIteration in `scanUntrackedFiles.py`
+  1. Trigger StopIteration in `scanUntrackedFiles.py`
 
 ### Refactor
   1. Refactor couch.database from `transferLibrary.py`
@@ -49,6 +48,7 @@ _See_ [README: Playlists](doc/README_Playlists.md)
   4. Common lazydict to cull down to deleted tracks
 
 ### Reengineer
+  0. View of undeleted tracks for progress of `transferLibrary.py`
   1. Refactor data import to use `pv` for progress bar
   2. Module loading scheme using `pv` (???)
   3. Simplify itunes.database exception generation to use default language
