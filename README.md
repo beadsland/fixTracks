@@ -36,24 +36,29 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 # Project Plan -- Short Term
 
-## CouchDB
+## Data Import
 
-### Reengineer
+### Scanning Files
   1. Trigger StopIteration in `scanUntrackedFiles.py`
 
-### Refactor
+### iTunes to CouchDB
   1. Refactor couch.database from `transferLibrary.py`
   2. Use bulk uploads rather than individual saves
   3. Determine elegant solution for storing python-language Views to CouchDB
-  4. Common lazydict to cull down to deleted tracks
+  4. Use batch iteration backed by bulk downloads
+  5. Common lazydict to cull down to deleted tracks
 
-### Reengineer
-  0. View of undeleted tracks for progress of `transferLibrary.py`
-  1. Refactor data import to use `pv` for progress bar
-  2. Module loading scheme using `pv` (???)
-  3. Simplify itunes.database exception generation to use default language
-  4. Datetime/String subclass to allow json.dump of datetime objects
-  5. JsonData class for parsing data fields in `iTunes Library.xml`
+### Commandline UX
+  1. View of undeleted tracks for progress of `transferLibrary.py`
+  2. Refactor data import to use `pv` for progress bar
+  3. Module loading scheme using `pv` (???)
+  4. Simplify itunes.database exception generation to use default language
+
+### Data Reprentation
+  1. Datetime/String subclass to allow json.dump of datetime objects
+  2. JsonData class for parsing data fields in `iTunes Library.xml`
+
+## Data Maintenance
 
 ### iPod
   1. Refactor `transferLibrary.py` for common use in iPod sync
@@ -67,7 +72,7 @@ _See_ [README: Playlists](doc/README_Playlists.md)
   2. Meta field in Podcast Feed documents for synonymous album tracks
   3. Dup removal from iTunes database
 
-### CouchDB
+### Maintenance
   1. Confirm updates don't change revision if no actual changes
   2. Set up transferLibrary to run periodically (to capture downloads)
 
