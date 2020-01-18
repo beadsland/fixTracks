@@ -94,12 +94,9 @@ class Database:
                              % value.replace("\n", "\\n"))
     (typ, value) = n.group(1, 2)
     if typ == "date": return key, value
-#    if type == "date":
-#      dt = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
-#      return key, savvy.common.Datetime(dt)
-    if typ == "string" and key != "Location": return key, value
     if typ == "string":
-      return key, urlparse.unquote(HTMLParser.unescape(value.encode('utf-8')))
+      value = HTMLParser.unescape(value).encode('utf-8')
+      return key, urlparse.unquote(value)
     if typ == "integer": return key, int(value)
     if typ == "float": return key, float(value)
     raise LibraryException("unknown type: %s: %s" \
