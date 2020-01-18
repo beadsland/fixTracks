@@ -40,13 +40,15 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 ### Scanning Files
   1. Trigger StopIteration in `scanUntrackedFiles.py`
+  2. Migrate to pure GUID _id scheme
 
 ### iTunes to CouchDB
   1. Refactor couch.database from `transferLibrary.py`
   2. Use bulk uploads rather than individual saves
-  3. Determine elegant solution for storing python-language Views to CouchDB
-  4. Use batch iteration backed by bulk downloads
-  5. Common lazydict to cull down to deleted tracks
+  3. Test elegant solution for storing python-language Views to CouchDB
+  4. Common lazydict to cull down to deleted tracks
+  5. Use batch iteration backed by bulk downloads
+  6. Only submit uploads on json diff
 
 ### Commandline UX
   1. View of undeleted tracks for progress of `transferLibrary.py`
@@ -54,7 +56,7 @@ _See_ [README: Playlists](doc/README_Playlists.md)
   3. Module loading scheme using `pv` (???)
   4. Simplify itunes.database exception generation to use default language
 
-### Data Reprentation
+### Data Representation
   1. Datetime/String subclass to allow json.dump of datetime objects
   2. JsonData class for parsing data fields in `iTunes Library.xml`
 
