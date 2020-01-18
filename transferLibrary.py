@@ -32,27 +32,18 @@ def parseLibrary(cdb):
     eta = (datetime.datetime.now() - start) / count * (total-count)
     eta = savvy.common.Delta(eta)
 
-    save_update(cdb, item)
-    seen.append(item['Persistent ID']) # '_persist_id' has only been set if already in DB
+    id = item["Persistent ID"]
+    cdb.update_node(id, 'iTunes', item, item["iTunes Library"]["Date"])
 
+    seen.append(id)
     sys.stdout.write("> %2.1f%% (%d): key %s [eta %s]     \r" \
                     % (float(count)/total*100, count, item['Track ID'], eta))
-
   return seen
-
-def save_update(db, node):
-  id = node["Persistent ID"]
-  doc = db[id] if id in db else {'_id': id}
-
-  node["_revdate"] = node["iTunes Library"]["Date"]
-  doc["iTunes"] = node
-  doc.save()
 
 # Main routine starts here...
 
 print "Loading couch database..."
-couch = cloudant.client.CouchDB("itunes", "senuti", url=COUCHDB, connect=True)
-#couch.resource.credentials = ("itunes", "senuti")
+couch = savvy.couch.Server("itunes", "senuti", COUCHDB)
 db = couch["audio_library"]
 mdate = datetime.datetime.fromtimestamp(os.path.getmtime(LIBRARY)).isoformat()
 

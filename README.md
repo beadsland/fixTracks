@@ -42,7 +42,7 @@ _See_ [README: Playlists](doc/README_Playlists.md)
   1. Confirm StopIteration working in `scanUntrackedFiles.py`
 
 ### iTunes to CouchDB
-  1. Refactor couch.database from `transferLibrary.py`
+  1. Refactor itunes parse loop from `transferLibrary.py`
   2. Use bulk uploads rather than individual saves
   3. Test elegant solution for storing python-language Views to CouchDB
   4. Common lazydict to cull down to deleted tracks
