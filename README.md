@@ -40,11 +40,10 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 ### iTunes to CouchDB
   1. Confirm StopIteration working in `scanUntrackedFiles.py`
-  2. Test elegant solution for storing python-language Views to CouchDB
-  3. View to identify non-deleted tracks with old \_revdate
-  4. Use bulk uploads rather than individual saves
-  5. Use batch iteration backed by bulk downloads
-  6. Only submit uploads on json diff
+  2. View to identify non-deleted tracks with old \_revdate
+  3. Use bulk uploads rather than individual saves
+  4. Use batch iteration backed by bulk downloads
+  5. Only submit uploads on json diff
 
 ### Commandline UX
   1. View of undeleted tracks for progress of `transferLibrary.py`
