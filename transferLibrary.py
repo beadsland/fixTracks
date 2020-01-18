@@ -3,8 +3,7 @@
 # Copyright 2019 Beads Land-Trujillo
 
 print "Loading modules..."
-import savvy.itunes.database
-import savvy.common
+import savvy.itunes
 import cloudant
 
 import os
@@ -19,36 +18,13 @@ else:
 
 LIBRARY = os.path.expanduser("~/Qnap/Data/iTunes/iTunes Library.xml")
 
-def parseLibrary(cdb):
-  seen = []
-  start = datetime.datetime.now()
-  count = 0
-  total = cdb.doc_count()
-
-  print "Total tracks (in couch): %d" % total
-
-  for item in savvy.itunes.database.Database(LIBRARY):
-    count += 1
-    eta = (datetime.datetime.now() - start) / count * (total-count)
-    eta = savvy.common.Delta(eta)
-
-    id = item["Persistent ID"]
-    cdb.update_node(id, 'iTunes', item, item["iTunes Library"]["Date"])
-
-    seen.append(id)
-    sys.stdout.write("> %2.1f%% (%d): key %s [eta %s]     \r" \
-                    % (float(count)/total*100, count, item['Track ID'], eta))
-  return seen
-
-# Main routine starts here...
-
 print "Loading couch database..."
 couch = savvy.couch.Server("itunes", "senuti", COUCHDB)
 db = couch["audio_library"]
 mdate = datetime.datetime.fromtimestamp(os.path.getmtime(LIBRARY)).isoformat()
 
 print "Parsing library..."
-seen = parseLibrary(db)
+seen = savvy.itunes.import(LIBRARY, db)
 
 print("\nSeen: %d" % len(seen))
 

@@ -38,14 +38,11 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 ## Data Import
 
-### Scanning Files
-  1. Confirm StopIteration working in `scanUntrackedFiles.py`
-
 ### iTunes to CouchDB
-  1. Refactor itunes parse loop from `transferLibrary.py`
-  2. Use bulk uploads rather than individual saves
-  3. Test elegant solution for storing python-language Views to CouchDB
-  4. Common lazydict to cull down to deleted tracks
+  1. Confirm StopIteration working in `scanUntrackedFiles.py`
+  2. Test elegant solution for storing python-language Views to CouchDB
+  3. View to identify non-deleted tracks with old \_revdate
+  4. Use bulk uploads rather than individual saves
   5. Use batch iteration backed by bulk downloads
   6. Only submit uploads on json diff
 
