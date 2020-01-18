@@ -36,13 +36,14 @@ class Folder:
 
   def __next__(self):
     if not hasattr(self, 'iter'): self.iter = os.scandir(self.path)
-    while self.iter:
+    while self.iter or self.dict:
       while len(self.dict):
         key = list(self.dict.keys())[0]
         result = self._next_deep(key)
         if result: return os.path.join(self.path, result)
         self.dict.pop(key)
       self._get_push(next(self.iter))
+    raise StopIteration
 
   def _next_deep(self, key):
     if type(self.dict[key]) is str:
@@ -68,10 +69,7 @@ class Folder:
     raise Exception('Path Not Cached: %s' % os.path.join(self.path, key))
 
   def _get_push(self, n):
-    if n.is_dir():
-      self.dict[n.name] = Folder(n.path)
-    else:
-      self.dict[n.name] = n.path
+    self.dict[n.name] = Folder(n.path) if n.is_dir() else n.path
 
 def assemble_paths():
   print("Assembling paths...")
