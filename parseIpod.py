@@ -14,7 +14,7 @@ db = savvy.ipod.init("/media", "/media/removable/microSD/back")
 print "Pushing ipod records to couchdb..."
 
 def save_update(cdb, track, mdate):
-  id = "Persistent ID %s" % track.persist_id
+  id = track.persist_id
   doc = cdb.get(id, default={"_id": id})
   doc["iPod"] = track.dump()
   doc["iPod"]["_revdate"] = mdate

@@ -41,13 +41,11 @@ def parseLibrary(cdb):
   return seen
 
 def save_update(db, node):
-  node["_persist_id"] = node["Persistent ID"]
-  id = "Persistent ID %s" % node["_persist_id"]
+  id = node["Persistent ID"]
   doc = db[id] if id in db else {'_id': id}
 
   node["_revdate"] = node["iTunes Library"]["Date"]
   doc["iTunes"] = node
-  doc["persist_id"] = node["_persist_id"]
   doc.save()
 
 # Main routine starts here...
@@ -61,8 +59,6 @@ mdate = datetime.datetime.fromtimestamp(os.path.getmtime(LIBRARY)).isoformat()
 print "Parsing library..."
 seen = parseLibrary(db)
 
-#seen = [db[key] for key in db if '_assume_deleted' not in db[key]['iTunes']]
-#seen = [doc['iTunes']['_persist_id'] for doc in seen]
 print("\nSeen: %d" % len(seen))
 
 print("Marking deletions... ")
@@ -81,10 +77,7 @@ print ""
 print ""
 
 for doc in presume:
-  key = doc['iTunes']['Persistent ID']
   sys.stdout.write("\r> Marking %s" % key)
-  doc['iTunes']['_persist_id'] = key
-  doc['persist_id'] = key
   if '_assume_deleted' in doc['iTunes']:
     del(doc['iTunes']['_assume_deleted'])
   doc['iTunes'][u'_deleted'] = u"%s" % mdate

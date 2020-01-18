@@ -40,7 +40,6 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 ### Scanning Files
   1. Confirm StopIteration working in `scanUntrackedFiles.py`
-  2. Migrate to pure GUID \_id scheme
 
 ### iTunes to CouchDB
   1. Refactor couch.database from `transferLibrary.py`
