@@ -36,7 +36,7 @@ class Delta:
       return self._format(self._value)
 
   def _format(self, delta):
-    if delta < DELTA_SEC1: return "%f ms" % (delta.microseconds / 1000)
+    if delta < DELTA_SEC1: return "%s ms" % str(delta.microseconds / 1000)
     if delta < DELTA_MIN1: return "%d s" % delta.seconds
     return re.sub(r'\.[0-9]+$', '', str(delta).lstrip('[0:]'))
 
