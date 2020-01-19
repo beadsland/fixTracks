@@ -62,11 +62,16 @@ class Database:
 
   def _collate_nodes(self, id, nodes, cache):
     sys.stdout.write("%s\r" % next(self._flywheel))
+
     doc = cache[id] if id in cache else {}
-    nodes += [(key, doc[key]) for key in doc
+    dnodes = [(key, doc[key]) for key in doc
                                       if key not in ('_id', '_rev', '_deleted')]
+    nodes = dnodes + nodes
+    dels = [value for (key, value) in nodes if key == '_deleted']
     nodes = sorted(nodes, key=lambda (k,v): v['_revdate'])
     nodes = {key: value for (key, value) in nodes}
+
     nodes['_id'] = id
     if '_rev' in doc: nodes['_rev'] = doc['_rev']
+    if len(dels): nodes['_deleted'] = dels[-1]
     return nodes
