@@ -2,7 +2,7 @@
 
 # Copyright 2019 Beads Land-Trujillo
 
-print "Loading modules..."
+print "Importing modules..."
 import savvy.itunes
 import savvy.couch
 import cloudant
