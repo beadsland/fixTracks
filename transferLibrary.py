@@ -24,7 +24,7 @@ db = couch["audio_library"]
 mdate = datetime.datetime.fromtimestamp(os.path.getmtime(LIBRARY)).isoformat()
 
 print "Parsing library..."
-seen = savvy.itunes.import(LIBRARY, db)
+seen = savvy.itunes.import_tracks(LIBRARY, db)
 
 print("\nSeen: %d" % len(seen))
 

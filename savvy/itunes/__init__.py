@@ -5,7 +5,7 @@ import savvy.common
 
 import datetime
 
-def import(itunes_xml, couch_db):
+def import_tracks(itunes_xml, couch_db):
   seen = []
   start = datetime.datetime.now()
   count = 0
