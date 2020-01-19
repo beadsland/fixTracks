@@ -4,12 +4,13 @@ import savvy.itunes.database
 import savvy.common
 
 import datetime
+import sys
 
 def import_tracks(itunes_xml, couch_db):
   seen = []
   start = datetime.datetime.now()
   count = 0
-  total = couch_db.doc_count()
+  total = len(couch_db)
 
   print "Total tracks (in couch): %d" % total
 
@@ -19,9 +20,10 @@ def import_tracks(itunes_xml, couch_db):
     eta = savvy.common.Delta(eta)
 
     id = item["Persistent ID"]
-    couch_db.update_node(id, 'iTunes', item, item["iTunes Library"]["Date"])
+    couch_db.stage_node(id, 'iTunes', item, item["iTunes Library"]["Date"])
 
     seen.append(id)
-    sys.stdout.write("> %2.1f%% (%d): key %s [eta %s]     \r" \
-                     % (float(count)/total*100, count, item['Track ID'], eta))
+    sys.stdout.write("> %2.1f%% (%d): key %s [eta %s]%s\r"
+                     % (float(count)/total*100, count, item['Track ID'], eta,
+                        " "*10))
   return seen

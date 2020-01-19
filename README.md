@@ -39,14 +39,13 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## Data Import
 
 ### iTunes to CouchDB
-  1. Flesh out `savvy.couch.database` as full dict wrapper
-  2. Use bulk uploads rather than individual saves
-  3. Use batch iteration backed by bulk downloads
-  4. Only submit uploads on json diff
-  5. View to identify non-deleted tracks with old \_revdate
+  1. View to identify non-deleted tracks with old \_revdate
+  2. Lazydict to iterate over non-deleted tracks view
+  3. Only submit updates on json diff
+  4. Wrap database documents and nodes to push all save operations to bulk
 
 ### Commandline UX
-  1. View of undeleted tracks for progress of `transferLibrary.py`
+  1. View of undeleted nodes for progress of `transferLibrary.py`
   2. Refactor data import to use `pv` for progress bar
   3. Module loading scheme using `pv` (???)
   4. Simplify itunes.database exception generation to use default language
