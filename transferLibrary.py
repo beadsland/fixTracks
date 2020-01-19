@@ -4,6 +4,7 @@
 
 print "Loading modules..."
 import savvy.itunes
+import savvy.couch
 import cloudant
 
 import os
@@ -20,7 +21,7 @@ LIBRARY = os.path.expanduser("~/Qnap/Data/iTunes/iTunes Library.xml")
 
 print "Loading couch database..."
 couch = savvy.couch.Server("itunes", "senuti", COUCHDB)
-db = couch["audio_library"]
+db = couch.database("audio_library")
 mdate = datetime.datetime.fromtimestamp(os.path.getmtime(LIBRARY)).isoformat()
 
 print "Parsing library..."
