@@ -36,13 +36,14 @@ class Folder:
 
   def __next__(self):
     if not hasattr(self, 'iter'): self.iter = os.scandir(self.path)
-    while self.iter or self.dict:
+    while self.dict or self.iter:
       while len(self.dict):
         key = list(self.dict.keys())[0]
         result = self._next_deep(key)
         if result: return os.path.join(self.path, result)
         self.dict.pop(key)
-      self._get_push(next(self.iter))
+      if self.iter:
+        self._get_push(next(self.iter))
     raise StopIteration
 
   def _next_deep(self, key):
@@ -82,7 +83,7 @@ def assemble_paths():
   return dirs
 
 def match_tracks(dirs):
-  print("\nAccessing database...")
+  print("Accessing database...")
   couch = couchdb.Server("http://192.168.2.52:4000")
   couch.resource.credentials = ("itunes", "senuti")
   db = couch['audio_library']

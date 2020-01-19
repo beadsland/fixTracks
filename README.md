@@ -39,11 +39,11 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## Data Import
 
 ### iTunes to CouchDB
-  1. Confirm StopIteration working in `scanUntrackedFiles.py`
-  2. View to identify non-deleted tracks with old \_revdate
-  3. Use bulk uploads rather than individual saves
-  4. Use batch iteration backed by bulk downloads
-  5. Only submit uploads on json diff
+  1. Flesh out `savvy.couch.database` as full dict wrapper
+  2. Use bulk uploads rather than individual saves
+  3. Use batch iteration backed by bulk downloads
+  4. Only submit uploads on json diff
+  5. View to identify non-deleted tracks with old \_revdate
 
 ### Commandline UX
   1. View of undeleted tracks for progress of `transferLibrary.py`
@@ -95,8 +95,9 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## Et cetera
 
 ### Further Repair
-  1. Filter orphans by file extension
-  2. Mark orphan files
+  1. Confirm final orphans list doesn't represent active files
+  2. Filter orphans by file extension
+  3. Mark orphan files for subsequent pruning
 
 ### libgpod Modernization
 
