@@ -2,7 +2,6 @@
 
 import io
 import re
-import datetime
 import urlparse
 import HTMLParser
 
