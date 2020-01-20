@@ -2,9 +2,10 @@
 
 # Copyright 2019 Beads Land-Trujillo
 
+import savvy.common
+
 import os
 import couchdb
-import sys
 
 root = os.path.expanduser("~/Qnap/Data/iTunes")
 
@@ -63,9 +64,10 @@ class Folder:
     if not hasattr(self, 'iter'): self.iter = os.scandir(self.path)
 
     while not key in self.dict and self.iter is not None:
-      sys.stdout.write("> %d in %s\r" % (len(self.dict), self.path))
+      savvy.common.write("> %d in %s" % (len(self.dict), self.path))
       self._get_push(next(self.iter))
 
+    print("")
     if key in self.dict: return self.dict[key]
     raise Exception('Path Not Cached: %s' % os.path.join(self.path, key))
 

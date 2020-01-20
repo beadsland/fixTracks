@@ -3,6 +3,7 @@
 # Copyright 2019 Beads Land-Trujillo
 
 print "Importing modules..."
+import savvy.common
 import savvy.ipod
 import savvy.messy
 
@@ -30,7 +31,7 @@ cdb = couch["audio_library"]
 
 mdate = db.modified_date.isoformat()
 for track in sorted(db, key=lambda self: self.persist_id):
-  sys.stdout.write("\r> %s  " % track.persist_id)
+  savvy.common.write(' '.join(['>', track.persist_id])
   save_update(cdb, track, mdate)
 print ""
 

@@ -1,5 +1,6 @@
 # Copyright 2020 Beads Land-Trujillo
 
+import savvy.common
 import savvy.couch.result
 import couchdb
 
@@ -45,9 +46,9 @@ class Database:
 
   def __del__(self):
     if len(self._bulk):
-      print "Bulk updating %d documents...%s" % (len(self._bulk), " "*10)
+      savvy.common.write("> Bulk updating %d documents..." % len(self._bulk))
       self.flush()
-      print "Bulk update finished"
+      print "\nBulk update finished"
 
   def flush(self):
     for i in range(0, 3):
