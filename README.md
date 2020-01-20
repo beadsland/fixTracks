@@ -38,11 +38,19 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 ## Data Import
 
+### UX Delays
+  1. Identify delay after last track seen
+  2. Spin flywheel while parsing bulk response
+
+## Missing Tracks
+  1. Unsliceable error in `LazyDict` should mimic dict slice
+  2. BadStatusLine thrown on sync_views but only after `import_tracks`
+  3. Refactor missing track logic to `import_tracks`
+
 ### iTunes to CouchDB
-  1. View to identify non-deleted tracks with old \_revdate
-  2. Lazydict to iterate over non-deleted tracks view
-  3. Only submit updates on json diff
-  4. Wrap database documents and nodes to push all save operations to bulk
+  1. Only submit updates on json diff
+  2. Wrap database documents and nodes to push all save operations to bulk
+  3. Set up `transferLibrary.py` to run periodically (to capture downloads)
 
 ### Commandline UX
   1. View of undeleted nodes for progress of `transferLibrary.py`
@@ -67,10 +75,6 @@ _See_ [README: Playlists](doc/README_Playlists.md)
   1. Dupfinder playlist class fronting a CouchDB
   2. Meta field in Podcast Feed documents for synonymous album tracks
   3. Dup removal from iTunes database
-
-### Maintenance
-  1. Confirm updates don't change revision if no actual changes
-  2. Set up transferLibrary to run periodically (to capture downloads)
 
 ## iPod Sync
 

@@ -21,26 +21,26 @@ class ViewResult:
     return self._wait(lambda: next(self._iter))
 
   def _wait(self, func):
-    msg = "Waiting for %s to index..." % self._viewname
+    msg = "Waiting for %s..." % self._viewname
     start = datetime.datetime.now()
     waiting = False
     value = None
+    task = None
 
-    savvy.common.write(msg)
     while not value:
       try:
+        if not waiting: savvy.common.write(msg)
         value = func()
+        if waiting: print ""
+      except StopIteration:
+        savvy.common.write("")
+        raise StopIteration
       except requests.exceptions.HTTPError as err:
         if 'timeout' in err.response.reason:
           delta = savvy.common.Delta(datetime.datetime.now() - start)
-          savvy.common.write(' '.join([msg, str(delta)]))
+          savvy.common.write(' '.join([msg, 'indexing...', str(delta)]))
           waiting = True
         else:
           raise err
-
-    if waiting:
-      print ""
-    else:
-      savvy.common.write("")
 
     return value
