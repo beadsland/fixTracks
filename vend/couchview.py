@@ -2,6 +2,9 @@
 # Source: https://markhaa.se/couchdb-views-in-python.html
 #
 # Copyright 2012 Mark Haase. Used in good faith.
+#
+# Edited in 2020 by Beads Land-Trujillo to document CouchDB configuration and
+# expose design and view names.
 ###
 
 # To use, add the following to /opt/couchdb/bin/couchdb
@@ -27,7 +30,8 @@ class CouchView(ViewDefinition):
         """
 
         module = sys.modules[self.__module__]
-        design_name = module.__name__.split('.')[-1]
+        self.design_name = module.__name__.split('.')[-1]
+        self.view_name = inflection.underscore(self.__class__.__name__)
 
         if hasattr(self.__class__, "map"):
             map_fun = self.__class__.map
@@ -39,8 +43,8 @@ class CouchView(ViewDefinition):
         else:
             reduce_fun = None
 
-        super_args = (design_name,
-                      inflection.underscore(self.__class__.__name__),
+        super_args = (self.design_name,
+                      self.view_name,
                       map_fun,
                       reduce_fun,
                       'python')

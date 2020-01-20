@@ -1,13 +1,34 @@
 # Copyright 2020 Beads Land-Trujillo
 
+import couchdb
+
 import itertools
 import sys
+import inspect
 
 class Database:
-  def __init__(self, db):
+  def __init__(self, db, viewdb, views):
     self._db = db
+    self._viewdb = viewdb
     self._bulk = {}
     self._flywheel = itertools.cycle("/-\|")
+    if views: self.sync_views(views)
+
+  def sync_views(self, views):
+    views = [view() if inspect.isclass(view) else view for view in views]
+    # This is legacy entry point, derived from Haase's python view
+    # implementation. Ideally, we ought to do the same thing only using
+    # cloudant library, and abandon dependency on now defunct couchdb library.
+    couchdb.design.ViewDefinition.sync_many(self._viewdb, views,
+                                            remove_missing=True)
+
+  # Bug: https://github.com/cloudant/python-cloudant/issues/456
+  def view(self, view, **kwargs):
+    if inspect.isclass(view): view = view()
+    self.flush()
+
+    design = '/'.join(['_design', view.design_name])
+    return self._db.get_view_result(design, view.view_name, **kwargs)
 
   def __len__(self):
     return self._db.doc_count()
