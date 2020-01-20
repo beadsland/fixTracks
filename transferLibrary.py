@@ -25,10 +25,10 @@ couch = savvy.couch.Server("itunes", "senuti", COUCHDB)
 db = couch.database("audio_library")
 mdate = datetime.datetime.fromtimestamp(os.path.getmtime(LIBRARY)).isoformat()
 
-print "Parsing library..."
+print "Loading itunes database..."
 seen = savvy.itunes.import_tracks(LIBRARY, db)
 
-print("Marking deletions... ")
+print("Marking deletions...")
 
 class iTunesNodes(savvy.couch.View):
   @staticmethod

@@ -3,15 +3,20 @@
 import re
 import datetime
 import sys
+import itertools
 
 DELTA_ZERO = datetime.timedelta(days = 0)
 DELTA_MIN1 = datetime.timedelta(minutes = 1)
 DELTA_SEC1 = datetime.timedelta(seconds = 1)
 
-def write(str):
-  sys.stdout.write("\r")
+FLYWHEEL = iter(itertools.cycle("/-\\|"))
+def flywheel(): return next(FLYWHEEL)
+def spin_flywheel(): write(flywheel(), False)
+
+def write(str, clear=True):
   sys.stdout.write(str)
-  sys.stdout.write("\033[K")
+  if clear: sys.stdout.write("\033[K")
+  sys.stdout.write("\r")
   sys.stdout.flush()
 
 class ReprArray:

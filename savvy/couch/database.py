@@ -4,8 +4,6 @@ import savvy.common
 import savvy.couch.result
 import couchdb
 
-import itertools
-import sys
 import inspect
 
 class Database:
@@ -13,7 +11,6 @@ class Database:
     self._db = db
     self._viewdb = viewdb
     self._bulk = {}
-    self._flywheel = itertools.cycle("/-\|")
     if views: self.sync_views(views)
 
   def sync_views(self, views):
@@ -65,10 +62,13 @@ class Database:
     if len(self._bulk) >= 500: self._push_bulk()
 
   def _push_bulk(self):
+    savvy.common.spin_flywheel()
     cache = self.get_docs(self._bulk.keys())
     bulk = [self._collate_nodes(id, self._bulk[id], cache) for id in self._bulk]
+    savvy.common.spin_flywheel()
     for resp in self._db.bulk_docs(bulk): self._parse_bulk_response(resp)
-    if len(self._bulk): print "Conflicts left %d documents" % len(self._bulk)
+    if len(self._bulk):
+      savvy.common.write("Conflicts left %d documents\n" % len(self._bulk))
 
   def _parse_bulk_response(self, resp):
     if 'ok' in resp and resp['ok']:
@@ -81,9 +81,6 @@ class Database:
       raise IOError(msg)
 
   def _collate_nodes(self, id, nodes, cache):
-    sys.stdout.write("\r%s" % next(self._flywheel))
-    sys.stdout.flush()
-
     doc = cache[id] if id in cache else {}
     dnodes = [(key, doc[key]) for key in doc
                                       if key not in ('_id', '_rev', '_deleted')]

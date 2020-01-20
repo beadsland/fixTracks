@@ -11,8 +11,6 @@ def import_tracks(itunes_xml, couch_db):
   count = 0
   total = len(couch_db)
 
-  print "Total tracks (in couch): %d" % total
-
   for item in savvy.itunes.database.Database(itunes_xml):
     count += 1
     eta = (datetime.datetime.now() - start) / count * (total-count)
@@ -24,5 +22,7 @@ def import_tracks(itunes_xml, couch_db):
     id = item["Persistent ID"]
     couch_db.stage_node(id, 'iTunes', item, item["iTunes Library"]["Date"])
     seen.append(id)
+
+    savvy.common.write("%s Parsing xml..." % savvy.common.flywheel())
   print ""
   return seen

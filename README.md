@@ -38,11 +38,8 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 
 ## Data Import
 
-### UX Delays
-  1. Identify delay after last track seen
-  2. Spin flywheel while parsing bulk response
-
 ## Missing Tracks
+  0. 504 should report as timeout
   1. Unsliceable error in `LazyDict` should mimic dict slice
   2. BadStatusLine thrown on sync_views but only after `import_tracks`
   3. Refactor missing track logic to `import_tracks`
