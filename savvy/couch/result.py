@@ -36,7 +36,7 @@ class ViewResult:
         savvy.common.write("")
         raise StopIteration
       except requests.exceptions.HTTPError as err:
-        if 'timeout' in err.response.reason:
+        if err.response.status_code == 504 or 'timeout' in err.response.reason:
           delta = savvy.common.Delta(datetime.datetime.now() - start)
           savvy.common.write(' '.join([msg, 'indexing...', str(delta)]))
           waiting = True
