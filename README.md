@@ -39,9 +39,8 @@ _See_ [README: Playlists](doc/README_Playlists.md)
 ## Data Import
 
 ## Missing Tracks
-  1. Unsliceable error in `LazyDict` should mimic dict slice
-  2. BadStatusLine thrown on sync_views but only after `import_tracks`
-  3. Refactor missing track logic to `import_tracks`
+  1. BadStatusLine thrown on sync_views but only after `import_tracks`
+  2. Refactor missing track logic to `import_tracks`
 
 ### iTunes to CouchDB
   1. Only submit updates on json diff

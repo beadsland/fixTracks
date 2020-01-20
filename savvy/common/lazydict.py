@@ -6,8 +6,7 @@ import itertools
 class LazyDict(collections.MutableMapping):
   def __init__(self, source, keyfunc, dict=None):
     self._source = iter(source)
-    if not callable(keyfunc):
-      raise LookupError(': '.join(['bad keyfunc', keyfunc]))
+    if not callable(keyfunc): raise TypeError("unhashable type")
     self._keyfunc = keyfunc
     self._dict = dict if dict else {}
 
