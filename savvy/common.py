@@ -2,10 +2,17 @@
 
 import re
 import datetime
+import sys
 
 DELTA_ZERO = datetime.timedelta(days = 0)
 DELTA_MIN1 = datetime.timedelta(minutes = 1)
 DELTA_SEC1 = datetime.timedelta(seconds = 1)
+
+def write(str):
+  sys.stdout.write("\r")
+  sys.stdout.write(str)
+  sys.stdout.write("\033[K")
+  sys.stdout.flush()
 
 class ReprArray:
   def __init__(self, arr, max=3):

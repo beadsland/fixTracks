@@ -1,5 +1,6 @@
 # Copyright 2020 Beads Land-Trujillo
 
+import savvy.couch.result
 import couchdb
 
 import itertools
@@ -24,11 +25,8 @@ class Database:
 
   # Bug: https://github.com/cloudant/python-cloudant/issues/456
   def view(self, view, **kwargs):
-    if inspect.isclass(view): view = view()
     self.flush()
-
-    design = '/'.join(['_design', view.design_name])
-    return self._db.get_view_result(design, view.view_name, **kwargs)
+    return savvy.couch.result.ViewResult(self._db, view, **kwargs)
 
   def __len__(self):
     return self._db.doc_count()
@@ -82,7 +80,8 @@ class Database:
       raise IOError(msg)
 
   def _collate_nodes(self, id, nodes, cache):
-    sys.stdout.write("%s\r" % next(self._flywheel))
+    sys.stdout.write("\r%s" % next(self._flywheel))
+    sys.stdout.flush()
 
     doc = cache[id] if id in cache else {}
     dnodes = [(key, doc[key]) for key in doc
