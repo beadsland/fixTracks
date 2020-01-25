@@ -70,7 +70,7 @@ def savvy_roster(db, name, cap=24, history=None):
       plist.add(t)
     far = far + datetime.timedelta(milliseconds = t.playtime)
 
-  print "\n%s: %d tracks" % (name, len(plist))
+  print "\n%s: %d tracks\n" % (name, len(plist))
 
 def savvy_history(db, name, cap=24):
   plist = db.get_playlist(name)
@@ -86,4 +86,4 @@ def savvy_history(db, name, cap=24):
     plist.add(t)
     far = far + datetime.timedelta(milliseconds = t.tracklen_time)
 
-  print "\n%s: %d tracks" % (name, len(plist))
+  print "\n%s: %d tracks\n" % (name, len(plist))

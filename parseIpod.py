@@ -37,18 +37,18 @@ print ""
 
 ###savvy.ipod_one_shot(db, "/home/beads/Downloads")
 
-print "\nDropping user playlists..."
+print "Dropping user playlists..."
 for name in db.playlists: db.drop_playlist(name)
 db.add_playlist("Savvy Playlist")
 db.add_playlist("Savvy History")
 
-print "\nRefreshing savvy history..."
+print "Refreshing savvy history..."
 savvy.messy.savvy_history(db, "Savvy History")
-print "\nRefreshing savvy roster..."
+print "Refreshing savvy roster..."
 savvy.messy.savvy_roster(db, "Savvy Playlist",
                              history=db.get_playlist("Savvy History"))
 
-print "\nHistory: %d, Roster %d" % (len(db.get_playlist("Savvy History")),
+print "History: %d, Roster %d" % (len(db.get_playlist("Savvy History")),
                                     len(db.get_playlist("Savvy Playlist")) -1)
 
 print ""
