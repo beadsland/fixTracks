@@ -43,9 +43,9 @@ db.add_playlist("Savvy Playlist")
 db.add_playlist("Savvy History")
 
 print "Refreshing savvy history..."
-savvy.messy.savvy_history(db, "Savvy History")
+savvy.messy.savvy_history(db, "Savvy History", 100)
 print "Refreshing savvy roster..."
-savvy.messy.savvy_roster(db, "Savvy Playlist",
+savvy.messy.savvy_roster(db, "Savvy Playlist", 100,
                              history=db.get_playlist("Savvy History"))
 
 print "History: %d, Roster %d" % (len(db.get_playlist("Savvy History")),
