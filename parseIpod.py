@@ -31,7 +31,7 @@ cdb = couch["audio_library"]
 
 mdate = db.modified_date.isoformat()
 for track in sorted(db, key=lambda self: self.persist_id):
-  savvy.common.write(' '.join(['>', track.persist_id])
+  savvy.common.write(' '.join(['>', track.persist_id]))
   save_update(cdb, track, mdate)
 print ""
 
