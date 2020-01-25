@@ -5,6 +5,8 @@ import savvy.playlist.held
 
 class Stagger:
   def __init__(self, denom, prop, feed, hold=None):
+    if denom < 2:
+      raise ValueError(': '.join["not enough zigs to zag", str(denom)])
     self._denom = denom
     self._prop = prop
     self._feed = feed
@@ -103,6 +105,6 @@ class Stagger:
 
     for h in self._held:
       if h != key:
-        self._held[h].advance(track.playtime)
+        self._held[h].advance(float(track.playtime) / (self._denom - 1))
     self._held[key].defer(track.playtime)
     return track
