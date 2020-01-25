@@ -20,10 +20,10 @@ def write(str, clear=True):
   sys.stdout.flush()
 
 class ReprArray:
-  def __init__(self, arr, max=3):
-    if len(arr) > max:
-      str = "+:%d" % (len(arr) - max)
-      arr = arr[:max]
+  def __init__(self, arr, cap=3):
+    if len(arr) and len(arr) > cap:
+      str = "+:%d" % (len(arr) - max(cap, 0))
+      arr = arr[:cap]
       arr.append(Literal(str))
     self._arr = arr
 

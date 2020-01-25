@@ -33,10 +33,14 @@ class Stagger:
     (belowzero, abovezero) = reduce(self._split_zero, arr, ([], []))
 
     forelen = min(3, len(belowzero))
-    backlen = min(3, max(3, len(abovezero) - forelen))
+    backlen = min(3-forelen, len(abovezero))
     if self._feed is not None:
-      if forelen > 0: forelen -=1
-      else: backlen -= 1
+      if backlen > 0: backlen -= 1
+      elif forelen > 2: forelen -= 1
+    if forelen and len(abovezero) and not backlen:
+      forelen -= 1; backlen += 1
+
+    print len(belowzero), len(abovezero), forelen, backlen
 
     if len(belowzero):
       belowzero = savvy.common.ReprArray(belowzero, forelen)
